@@ -9,7 +9,7 @@
 
 [github-license]: https://github.com/sounisi5011/metalsmith-dart-sass/blob/v0.0.0/LICENSE
 
-[Dart Sass] plugin for [PostCSS].
+[Dart Sass] plugin for [Metalsmith].
 
 [Dart Sass]: https://sass-lang.com/dart-sass
 [Metalsmith]: https://github.com/segmentio/metalsmith
