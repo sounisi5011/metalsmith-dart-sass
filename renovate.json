@@ -1,0 +1,15 @@
+{
+  "extends": ["config:base"],
+  "commitMessagePrefix": "\u2B06\uFE0F",
+  "ignorePaths": ["script/**/package.json"],
+  "packageRules": [
+    {
+      "updateTypes": ["pin"],
+      "commitMessagePrefix": "\uD83D\uDCCC"
+    },
+    {
+      "updateTypes": ["rollback"],
+      "commitMessagePrefix": "\u2B07\uFE0F"
+    }
+  ]
+}
