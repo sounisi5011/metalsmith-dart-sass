@@ -1,0 +1,11 @@
+{
+  "name": "@sounisi5011/check-type-defs-pkgs",
+  "version": "0.0.0",
+  "private": true,
+  "bin": "index.js",
+  "dependencies": {
+    "@typescript-eslint/typescript-estree": "^2.4.0",
+    "cross-spawn": "^7.0.1",
+    "recursive-readdir": "^2.2.2"
+  }
+}
