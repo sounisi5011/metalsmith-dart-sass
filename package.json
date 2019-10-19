@@ -73,7 +73,7 @@
       "run-s build:readme --",
       "git add ./README.md"
     ],
-    "!(package).json|*.{js,yaml,yml}": [
+    "!(package).json|*.{js,yaml,yml,scss}": [
       "prettier --write",
       "git add"
     ],
