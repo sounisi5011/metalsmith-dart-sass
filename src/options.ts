@@ -30,7 +30,11 @@ export interface InputOptionsInterface
 export type InputOptions = OptionsGenerator<Partial<InputOptionsInterface>>;
 
 export const defaultOptions: OptionsInterface = deepFreeze({
-    pattern: ['**/*.sass', '**/*.scss'],
+    /**
+     * Partial files whose names begin with an underscore should be excluded from conversion.
+     * @see https://sass-lang.com/guide#topic-4
+     */
+    pattern: ['**/*.sass', '**/*.scss', '!**/_*'],
     plugins: [],
     options: {},
     renamer(filename) {
