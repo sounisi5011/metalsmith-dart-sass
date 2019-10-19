@@ -29,50 +29,27 @@ export function getMatchedFilenameList(
     return matchedFilenameList;
 }
 
-export function findFile(
-    files: MetalsmithStrictFiles,
-    searchFilename: string,
-    metalsmith?: Metalsmith,
-): [string, unknown] | [null, null];
 export function findFile<T>(
-    files: MetalsmithStrictFiles,
-    searchFilename: string,
-    metalsmith: Metalsmith | undefined,
-    filter: (value: unknown) => value is T,
-): [string, T] | [null, null];
-export function findFile<T = unknown>(
-    files: MetalsmithStrictFiles,
+    files: Readonly<Record<string, T>>,
     searchFilename: string,
     metalsmith?: Metalsmith,
-    filter?: (value: unknown) => value is T,
 ): [string, T] | [null, null] {
-    if (!filter) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
-        filter = (_value: unknown): _value is any => true;
-    }
-
     if (hasProp(files, searchFilename)) {
-        const filedata = files[searchFilename];
-        if (filter(filedata)) {
-            return [searchFilename, filedata];
-        }
+        return [searchFilename, files[searchFilename]];
     }
 
-    const fileList = Object.entries(files);
     const pathNormalizerList: ((filename: string) => string)[] = metalsmith
         ? [metalsmith.source(), metalsmith.destination()].map(pathstr =>
               metalsmith.path.bind(metalsmith, pathstr),
           )
         : [path.normalize];
+    const filenameList = Object.keys(files);
 
     for (const pathNormalizer of pathNormalizerList) {
-        const normalizeFilename = pathNormalizer(searchFilename);
-        for (const [filename, filedata] of fileList) {
-            if (
-                filter(filedata) &&
-                normalizeFilename === pathNormalizer(filename)
-            ) {
-                return [filename, filedata];
+        const normalizedSearchFilename = pathNormalizer(searchFilename);
+        for (const filename of filenameList) {
+            if (normalizedSearchFilename === pathNormalizer(filename)) {
+                return [filename, files[filename]];
             }
         }
     }
