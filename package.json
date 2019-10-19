@@ -39,7 +39,7 @@
     "ava": "ava",
     "build": "run-s tsc",
     "build:readme": "readme-generator --template ./readme-template.mustache",
-    "clean": "del './dist/'",
+    "clean": "del './dist/' './test/fixtures/*/build'",
     "fmt-pkg": "run-s fmt-pkg:prettier fmt-pkg:sort",
     "fmt-pkg:prettier": "prettier-package-json --write ./package.json",
     "fmt-pkg:sort": "sort-package-json ./package.json",
