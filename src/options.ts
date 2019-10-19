@@ -30,7 +30,7 @@ export interface InputOptionsInterface
 export type InputOptions = OptionsGenerator<Partial<InputOptionsInterface>>;
 
 export const defaultOptions: OptionsInterface = deepFreeze({
-    pattern: ['**/*.css'],
+    pattern: ['**/*.sass', '**/*.scss'],
     plugins: [],
     options: {},
     renamer(filename) {
