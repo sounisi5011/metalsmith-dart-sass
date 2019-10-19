@@ -38,23 +38,17 @@ export function findFile<T>(
         return [searchFilename, files[searchFilename]];
     }
 
+    const pathNormalizerList: ((filename: string) => string)[] = metalsmith
+        ? [metalsmith.source(), metalsmith.destination()].map(pathstr =>
+              metalsmith.path.bind(metalsmith, pathstr),
+          )
+        : [path.normalize];
     const filenameList = Object.keys(files);
-    if (metalsmith) {
-        for (const pathNormalizer of [
-            metalsmith.path.bind(metalsmith, metalsmith.source()),
-            metalsmith.path.bind(metalsmith, metalsmith.destination()),
-        ]) {
-            const normalizedSearchFilename = pathNormalizer(searchFilename);
-            for (const filename of filenameList) {
-                if (normalizedSearchFilename === pathNormalizer(filename)) {
-                    return [filename, files[filename]];
-                }
-            }
-        }
-    } else {
-        const normalizedSearchFilename = path.normalize(searchFilename);
+
+    for (const pathNormalizer of pathNormalizerList) {
+        const normalizedSearchFilename = pathNormalizer(searchFilename);
         for (const filename of filenameList) {
-            if (normalizedSearchFilename === path.normalize(filename)) {
+            if (normalizedSearchFilename === pathNormalizer(filename)) {
                 return [filename, files[filename]];
             }
         }
