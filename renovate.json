@@ -1,6 +1,7 @@
 {
   "extends": ["config:base"],
   "commitMessagePrefix": "\u2B06\uFE0F",
+  "ignoreDeps": ["normalize.css"],
   "ignorePaths": ["script/**/package.json"],
   "packageRules": [
     {
