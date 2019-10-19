@@ -1,11 +1,14 @@
 import { isReadonlyOrWritableArray } from '../../src/utils/types';
 
-export { hasProp } from '../../src/utils';
+export { hasProp, isObject } from '../../src/utils';
 
 export const isArray: isReadonlyOrWritableArray = Array.isArray;
 
-export function isStringList(value: unknown): value is string[] {
-    return Array.isArray(value) && value.every(v => typeof v === 'string');
+export function isTypeList<T>(
+    filter: (value: unknown) => value is T,
+    value: unknown,
+): value is T[] {
+    return Array.isArray(value) && value.every(v => filter(v));
 }
 
 export function ignoreTypeError(callback: () => void): void {
