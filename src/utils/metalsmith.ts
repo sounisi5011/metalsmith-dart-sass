@@ -29,13 +29,13 @@ export function getMatchedFilenameList(
     return matchedFilenameList;
 }
 
-export function findFile<T>(
-    files: Readonly<Record<string, T>>,
+export function findFilename(
+    files: MetalsmithStrictFiles,
     searchFilename: string,
     metalsmith?: Metalsmith,
-): [string, T] | [null, null] {
+): string | null {
     if (hasProp(files, searchFilename)) {
-        return [searchFilename, files[searchFilename]];
+        return searchFilename;
     }
 
     const pathNormalizerList: (typeof path.normalize)[] = metalsmith
@@ -50,9 +50,23 @@ export function findFile<T>(
         const normalizedSearchFilename = pathNormalizer(searchFilename);
         for (const filename of filenameList) {
             if (normalizedSearchFilename === pathNormalizer(filename)) {
-                return [filename, files[filename]];
+                return filename;
             }
         }
+    }
+
+    return null;
+}
+
+export function findFile<T>(
+    files: Readonly<Record<string, T>>,
+    searchFilename: string,
+    metalsmith?: Metalsmith,
+): [string, T] | [null, null] {
+    const foundFilename = findFilename(files, searchFilename, metalsmith);
+
+    if (typeof foundFilename === 'string') {
+        return [foundFilename, files[foundFilename]];
     }
 
     return [null, null];
