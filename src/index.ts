@@ -81,6 +81,7 @@ async function processFile({
         await options.renamer(filename),
     );
     const sassOptions = {
+        indentedSyntax: path.extname(srcFileFullpath) === '.sass',
         ...options.options,
         file: srcFileFullpath,
         outFile: destFileFullpath,
