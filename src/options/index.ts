@@ -42,7 +42,7 @@ export interface InputOptionsInterface
     extends Omit<OptionsInterface, 'pattern' | 'options' | 'renamer'> {
     readonly pattern: string | OptionsInterface['pattern'];
     readonly options: InputSassOptionsInterface;
-    readonly renamer: OptionsInterface['renamer'] | boolean | null;
+    readonly renamer: string | OptionsInterface['renamer'] | boolean | null;
 }
 
 export type InputOptions = OptionsGenerator<Partial<InputOptionsInterface>>;
@@ -80,11 +80,22 @@ function normalizePattern(
 function normalizeRenamer(
     inputRenamer?: InputOptionsInterface['renamer'],
 ): OptionsInterface['renamer'] {
-    return typeof inputRenamer === 'function'
-        ? inputRenamer
-        : inputRenamer || inputRenamer === undefined
-        ? defaultOptions.renamer
-        : (filename: string) => filename;
+    if (typeof inputRenamer === 'string' && inputRenamer !== '') {
+        inputRenamer = loadModule(
+            inputRenamer,
+            err => `Loading renamer failed: ${err.message}`,
+        ) as Exclude<typeof inputRenamer, string>;
+    }
+
+    if (typeof inputRenamer === 'function') {
+        return inputRenamer;
+    }
+
+    if (inputRenamer || inputRenamer === undefined) {
+        return defaultOptions.renamer;
+    }
+
+    return (filename: string) => filename;
 }
 
 export async function normalizeOptions(
