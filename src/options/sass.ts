@@ -108,6 +108,38 @@ function normalizeImporter(
     );
 }
 
+function normalizeFunctionsEntry({
+    functions,
+    funcSignature,
+    funcCallback,
+}: {
+    functions: Required<sass.Options>['functions'];
+    funcSignature: string;
+    funcCallback: Required<InputSassOptionsInterface>['functions'][string];
+}): void {
+    if (typeof funcCallback === 'string') {
+        functions[funcSignature] = loadOption({
+            moduleName: funcCallback,
+            optionName: 'functions',
+            filter: isFunctionsItem,
+            returnTypeName: 'function',
+        });
+    } else if (typeof funcCallback === 'function') {
+        functions[funcSignature] = funcCallback;
+    } else {
+        const [[moduleName, options] = []] = Object.entries(funcCallback);
+        if (moduleName) {
+            functions[funcSignature] = loadOptionGenerator({
+                moduleName,
+                options,
+                optionName: 'functions',
+                filter: isFunctionsItem,
+                returnTypeName: 'function',
+            });
+        }
+    }
+}
+
 function normalizeFunctions(
     inputFunctions: Required<InputSassOptionsInterface>['functions'],
 ): Required<sass.Options>['functions'] {
@@ -115,29 +147,7 @@ function normalizeFunctions(
         ReturnType<typeof normalizeFunctions>
     >((functions, [funcSignature, funcCallback]) => {
         if (funcCallback) {
-            if (typeof funcCallback === 'string') {
-                functions[funcSignature] = loadOption({
-                    moduleName: funcCallback,
-                    optionName: 'functions',
-                    filter: isFunctionsItem,
-                    returnTypeName: 'function',
-                });
-            } else if (typeof funcCallback === 'function') {
-                functions[funcSignature] = funcCallback;
-            } else {
-                const [[moduleName, options] = []] = Object.entries(
-                    funcCallback,
-                );
-                if (moduleName) {
-                    functions[funcSignature] = loadOptionGenerator({
-                        moduleName,
-                        options,
-                        optionName: 'functions',
-                        filter: isFunctionsItem,
-                        returnTypeName: 'function',
-                    });
-                }
-            }
+            normalizeFunctionsEntry({ functions, funcSignature, funcCallback });
         }
         return functions;
     }, {});
