@@ -143,30 +143,49 @@ function normalizeFunctions(
     }, {});
 }
 
-const defaultOpts = defaultOptions.options;
+function assignInputOption<
+    T extends object,
+    U extends object,
+    P extends keyof T & keyof U
+>(
+    options: T,
+    prop: P,
+    {
+        inputOptions,
+        defaultOpts,
+        normalizer,
+    }: {
+        inputOptions: U;
+        defaultOpts: T;
+        normalizer: (input: Required<U>[P]) => Required<T>[P];
+    },
+) {
+    if (inputOptions[prop]) {
+        options[prop] = normalizer(inputOptions[prop]);
+    } else if (hasProp(defaultOpts, prop)) {
+        options[prop] = defaultOpts[prop];
+    } else {
+        delete options[prop];
+    }
+}
 
-export function normalize(options?: InputOptionsInterface['options']) {
-    const opts = { ...defaultOpts };
+export function normalize(inputOptions?: InputOptionsInterface['options']) {
+    const defaultOpts = defaultOptions.options;
+    const options = { ...defaultOpts };
 
-    if (options) {
-        Object.assign(opts, options);
-
-        if (options.importer) {
-            opts.importer = normalizeImporter(options.importer);
-        } else if (hasProp(defaultOpts, 'importer')) {
-            opts.importer = defaultOpts.importer;
-        } else {
-            delete opts.importer;
-        }
-
-        if (options.functions) {
-            opts.functions = normalizeFunctions(options.functions);
-        } else if (hasProp(defaultOpts, 'functions')) {
-            opts.functions = defaultOpts.functions;
-        } else {
-            delete opts.functions;
-        }
+    if (inputOptions) {
+        Object.assign(options, inputOptions);
+        assignInputOption(options, 'importer', {
+            inputOptions,
+            defaultOpts,
+            normalizer: normalizeImporter,
+        });
+        assignInputOption(options, 'functions', {
+            inputOptions,
+            defaultOpts,
+            normalizer: normalizeFunctions,
+        });
     }
 
-    return opts;
+    return options;
 }
