@@ -65,6 +65,26 @@ function loadOptionGenerator<T>({
     return value;
 }
 
+function normalizeImporterRecord(
+    inputImporter: Record<string, unknown>,
+): ArrayLikeOnly<Required<sass.Options>['importer']> {
+    return Object.entries(inputImporter).reduce<
+        ReturnType<typeof normalizeImporterRecord>
+    >(
+        (importerList, [moduleName, options]) =>
+            importerList.concat(
+                loadOptionGenerator({
+                    moduleName,
+                    options,
+                    optionName: 'importer',
+                    filter: isImporter,
+                    returnTypeName: 'valid importer',
+                }),
+            ),
+        [],
+    );
+}
+
 function normalizeImporter(
     inputImporter: Required<InputSassOptionsInterface>['importer'],
 ): Required<sass.Options>['importer'] {
@@ -91,21 +111,7 @@ function normalizeImporter(
         );
     }
 
-    return Object.entries(inputImporter).reduce<
-        ArrayLikeOnly<ReturnType<typeof normalizeImporter>>
-    >(
-        (importerList, [moduleName, options]) =>
-            importerList.concat(
-                loadOptionGenerator({
-                    moduleName,
-                    options,
-                    optionName: 'importer',
-                    filter: isImporter,
-                    returnTypeName: 'valid importer',
-                }),
-            ),
-        [],
-    );
+    return normalizeImporterRecord(inputImporter);
 }
 
 function normalizeFunctionsEntry({
