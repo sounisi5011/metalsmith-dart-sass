@@ -7,6 +7,7 @@ import { MetalsmithStrictWritableFiles } from './utils/metalsmith';
 import { isReadonlyOrWritableArray } from './utils/types';
 
 type OptionsGenerator<T> =
+    | string
     | T
     | ((
           files: MetalsmithStrictWritableFiles,
@@ -21,9 +22,24 @@ export interface OptionsInterface {
     readonly dependenciesKey: string | false | null;
 }
 
+export type ImporterJSONType = string | Record<string, unknown>;
+
+export interface InputSassOptionsInterface
+    extends Omit<sass.Options, 'importer' | 'functions'> {
+    importer?:
+        | (ImporterJSONType | sass.Importer)
+        | (ImporterJSONType | sass.Importer)[];
+    functions?: Record<
+        string,
+        | ImporterJSONType
+        | (Exclude<sass.Options['functions'], undefined>[string])
+    >;
+}
+
 export interface InputOptionsInterface
-    extends Omit<OptionsInterface, 'pattern' | 'renamer'> {
+    extends Omit<OptionsInterface, 'pattern' | 'options' | 'renamer'> {
     readonly pattern: string | OptionsInterface['pattern'];
+    readonly options: InputSassOptionsInterface;
     readonly renamer: OptionsInterface['renamer'] | boolean | null;
 }
 
