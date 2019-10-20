@@ -7,3 +7,5 @@
 export type isReadonlyOrWritableArray = (
     value: unknown,
 ) => value is unknown[] | ReadonlyArray<unknown>;
+
+export type ArrayLikeOnly<T> = T extends ReadonlyArray<unknown> ? T : never;
