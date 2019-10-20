@@ -175,7 +175,7 @@ function assignInputOption<
         defaultOpts: T;
         normalizer: (input: Required<U>[P]) => Required<T>[P];
     },
-) {
+): void {
     if (inputOptions[prop]) {
         options[prop] = normalizer(inputOptions[prop]);
     } else if (hasProp(defaultOpts, prop)) {
@@ -185,7 +185,9 @@ function assignInputOption<
     }
 }
 
-export function normalize(inputOptions?: InputOptionsInterface['options']) {
+export function normalize(
+    inputOptions?: InputOptionsInterface['options'],
+): sass.Options {
     const defaultOpts = defaultOptions.options;
     const options = { ...defaultOpts };
 
