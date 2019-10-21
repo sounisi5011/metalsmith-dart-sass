@@ -1,9 +1,9 @@
 import sass from 'sass';
 import util from 'util';
 
-import { hasProp, indent, loadModule } from '../utils';
+import { hasProp, indent, isObject, loadModule } from '../utils';
 import { isFunctionsItem, isImporter } from '../utils/sass';
-import { ArrayLikeOnly } from '../utils/types';
+import { ArrayLikeOnly, FunctionTypeOnly } from '../utils/types';
 import {
     defaultOptions,
     InputOptionsInterface,
@@ -181,6 +181,25 @@ function normalizeFunctions(
     }, {});
 }
 
+function isSassOptionsObject(value: unknown): value is sass.Options {
+    return isObject(value);
+}
+
+function toSassOptionsGenerator(
+    value: Function,
+    { moduleName }: { moduleName: string },
+): FunctionTypeOnly<OptionsInterface['sassOptions']> {
+    return async (...args) => {
+        const ret = await value(...args);
+        if (!isSassOptionsObject(ret)) {
+            throw new TypeError(
+                `Invalid sassOptions option. The function exported by this module does not return object: '${moduleName}'`,
+            );
+        }
+        return ret;
+    };
+}
+
 function assignInputOption<
     T extends object,
     U extends object,
@@ -214,10 +233,20 @@ export function normalize(
     const sassOptions = { ...defaultOpts };
 
     if (typeof inputOptions === 'string') {
-        return loadModule(
-            inputOptions,
-            err => `Loading sassOptions failed: ${err.message}`,
-        ) as OptionsInterface['sassOptions'];
+        const moduleName = inputOptions;
+        const exportedValue = loadModule(
+            moduleName,
+            err => `Loading sassOptions option failed: ${err.message}`,
+        );
+        if (isSassOptionsObject(exportedValue)) {
+            return exportedValue;
+        }
+        if (typeof exportedValue === 'function') {
+            return toSassOptionsGenerator(exportedValue, { moduleName });
+        }
+        throw new TypeError(
+            `Invalid sassOptions option. Module does not export object or function: '${moduleName}'`,
+        );
     }
 
     if (typeof inputOptions === 'function') {
