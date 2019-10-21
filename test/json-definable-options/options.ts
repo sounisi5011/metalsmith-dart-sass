@@ -29,7 +29,7 @@ test('should fail import a non exist script file', async t => {
         normalizeOptions({}, Metalsmith(__dirname), './non-exist'),
         {
             instanceOf: Error,
-            message: `Loading options failed: Cannot find module './non-exist'`,
+            message: /^Loading options failed: Cannot find module '\.\/non-exist'(?=[\r\n]|$)/,
         },
     );
 });

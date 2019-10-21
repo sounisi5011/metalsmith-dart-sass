@@ -6,6 +6,5 @@ module.exports = (files, metalsmith, defaultOptions) => {
       outputStyle: 'compressed',
       linefeed: 'crlf',
     },
-    renamer: false,
   };
 };

@@ -25,7 +25,7 @@ test('should fail import a non exist script file that defines renamer option', a
         }),
         {
             instanceOf: Error,
-            message: `Loading renamer failed: Cannot find module './non-exist'`,
+            message: /^Loading renamer failed: Cannot find module '\.\/non-exist'(?=[\r\n]|$)/,
         },
     );
 });
