@@ -24,17 +24,17 @@ export interface OptionsInterface {
     readonly dependenciesKey: string | false | null;
 }
 
-export type ImporterJSONType = string | Record<string, unknown>;
+type InputSassImporter = string | Record<string, unknown> | sass.Importer;
+
+type InputSassFunctionsValue =
+    | string
+    | Record<string, unknown>
+    | Required<sass.Options>['functions'][string];
 
 export interface InputSassOptionsInterface
     extends Omit<sass.Options, 'importer' | 'functions'> {
-    importer?:
-        | (ImporterJSONType | sass.Importer)
-        | (ImporterJSONType | sass.Importer)[];
-    functions?: Record<
-        string,
-        ImporterJSONType | (Required<sass.Options>['functions'][string])
-    >;
+    importer?: InputSassImporter | InputSassImporter[];
+    functions?: Record<string, InputSassFunctionsValue>;
 }
 
 export interface InputOptionsInterface
