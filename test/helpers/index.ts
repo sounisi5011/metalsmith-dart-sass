@@ -32,6 +32,10 @@ export function filterObjKey<
     );
 }
 
+export function flatArray<T>(array: ReadonlyArray<T | ReadonlyArray<T>>): T[] {
+    return ([] as T[]).concat(...array);
+}
+
 export function ignoreTypeError(callback: () => void): void {
     try {
         callback();

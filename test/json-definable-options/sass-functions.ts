@@ -201,3 +201,27 @@ test('When "functions" option is defined by function, option value should be ret
         t.is(options.options.functions['func()'], functions['func()']);
     }
 });
+
+// functions: Record<string, string | Record<string, unknown> | (...args: sass.types.SassType[]) => (sass.types.SassType | void)>
+
+test('Even if the value of the object of the "functions" option is of various types, all values should be converted to functions', async t => {
+    const func = (): void => {};
+    const options = await normalizeOptions({}, Metalsmith(__dirname), {
+        options: {
+            functions: {
+                'pow($base, $exponent)': './valid-functions-pow',
+                'sqrt($number)': './valid-functions-sqrt',
+                'func($arg)': { './valid-functions-generator': null },
+                'func()': func,
+            },
+        },
+    });
+    t.deepEqual(options.options.functions, {
+        'pow($base, $exponent)': require(fixtures('./valid-functions-pow')),
+        'sqrt($number)': require(fixtures('./valid-functions-sqrt')),
+        // Note: In order to avoid the side effects of esModuleInterop, require() is used.
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        'func($arg)': require(fixtures('./valid-functions-generator'))(null),
+        'func()': func,
+    });
+});

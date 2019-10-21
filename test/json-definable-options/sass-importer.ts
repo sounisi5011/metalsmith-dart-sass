@@ -4,6 +4,7 @@ import onceImporter from 'node-sass-once-importer';
 import packageImporter from 'node-sass-package-importer';
 
 import { normalizeOptions } from '../../src/options';
+import { flatArray } from '../helpers';
 import fixtures from './fixtures';
 
 test.before(() => {
@@ -154,11 +155,11 @@ test('should import a script file that defines importer option / defined in stri
     });
     const expectedOptions = await normalizeOptions({}, Metalsmith(__dirname), {
         options: {
-            importer: [].concat(
+            importer: flatArray([
                 // Note: In order to avoid the side effects of esModuleInterop, require() is used.
                 // eslint-disable-next-line @typescript-eslint/no-var-requires
                 require(fixtures('./valid-importer')),
-            ),
+            ]),
         },
     });
     t.deepEqual(options, expectedOptions);
@@ -288,4 +289,29 @@ test('When importer option is defined by function array, option value must be re
         },
     });
     t.is(options.options.importer, importer);
+});
+
+// importer: (string | Record<string, unknown> | sass.Importer)[]
+
+test('Even if the array value of the importer option has various types, it is necessary to process all importers', async t => {
+    const importer = (): void => {};
+    const options = await normalizeOptions({}, Metalsmith(__dirname), {
+        options: {
+            importer: [
+                './valid-importer',
+                { './valid-importer-generator': null },
+                importer,
+            ],
+        },
+    });
+    t.deepEqual(
+        options.options.importer,
+        flatArray([
+            require(fixtures('./valid-importer')),
+            // Note: In order to avoid the side effects of esModuleInterop, require() is used.
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            require(fixtures('./valid-importer-generator'))(null),
+            importer,
+        ]),
+    );
 });
