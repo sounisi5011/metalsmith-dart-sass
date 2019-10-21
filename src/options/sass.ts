@@ -51,7 +51,7 @@ function loadOptionGenerator<T>({
     );
     if (typeof generator !== 'function') {
         throw new TypeError(
-            `Loading ${optionName} option generator failed: Module does not export function '${moduleName}'`,
+            `Loading ${optionName} option generator failed. Module does not export function: '${moduleName}'`,
         );
     }
 
