@@ -33,8 +33,7 @@ export interface InputSassOptionsInterface
         | (ImporterJSONType | sass.Importer)[];
     functions?: Record<
         string,
-        | ImporterJSONType
-        | (Exclude<sass.Options['functions'], undefined>[string])
+        ImporterJSONType | (Required<sass.Options>['functions'][string])
     >;
 }
 
