@@ -24,14 +24,25 @@ test('should import a script file that defines sassOptions option / export objec
 });
 
 test('should import a script file that defines sassOptions option / export function', async t => {
-    const options = await normalizeOptions({}, Metalsmith(__dirname), {
+    const { sassOptions } = await normalizeOptions({}, Metalsmith(__dirname), {
         sassOptions: './valid-sass-options-generator',
     });
+
+    if (typeof sassOptions !== 'function') {
+        t.fail('sassOptions option should be a function');
+        t.log({ sassOptions });
+        return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const context: Parameters<typeof sassOptions>[0] = {} as any;
     t.is(
-        options.sassOptions,
+        await sassOptions(context),
         // Note: In order to avoid the side effects of esModuleInterop, require() is used.
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        require(optionsFixtures('./valid-sass-options-generator')),
+        await require(optionsFixtures('./valid-sass-options-generator'))(
+            context,
+        ),
     );
 });
 
