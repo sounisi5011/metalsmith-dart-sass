@@ -33,7 +33,7 @@ export interface OptionsInterface {
               metalsmith: Metalsmith;
               metalsmithFiles: MetalsmithStrictFiles;
               pluginOptions: OptionsInterface;
-          }) => sass.Options);
+          }) => sass.Options | Promise<sass.Options>);
     readonly renamer: (filename: string) => string | Promise<string>;
     readonly dependenciesKey: string | false | null;
 }
