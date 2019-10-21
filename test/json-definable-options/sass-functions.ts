@@ -1,7 +1,9 @@
 import test from 'ava';
 import Metalsmith from 'metalsmith';
+import util from 'util';
 
 import { normalizeOptions } from '../../src/options';
+import { filterObjKey } from '../helpers';
 import fixtures from './fixtures';
 
 test.before(() => {
@@ -146,32 +148,35 @@ test('should fail import a script file that defines invalid "functions" option /
 });
 
 test('If the number of object properties specified in the "functions" option value is not one, it should fail', async t => {
+    const functions = {
+        'pow($base, $exponent)': './valid-functions-pow',
+        'sqrt($number)': './valid-functions-sqrt',
+        'func($arg)': {
+            './invalid-generator': null,
+            './invalid-functions-generator': {
+                xxx: {
+                    yyy: {
+                        zzz: {},
+                    },
+                },
+            },
+        },
+    };
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
             options: {
-                functions: {
-                    'pow($base, $exponent)': './valid-functions-pow',
-                    'sqrt($number)': './valid-functions-sqrt',
-                    'func($arg)': {
-                        './invalid-generator': null,
-                        './invalid-functions-generator': {
-                            xxx: {
-                                yyy: {
-                                    zzz: {},
-                                },
-                            },
-                        },
-                    },
-                },
+                functions,
             },
         }),
         {
             instanceOf: TypeError,
             message: [
                 `Invalid functions option. The number of object properties specified in the function option value must be one. But the number of properties is 2:`,
-                `  { 'func($arg)': `,
-                `     { './invalid-generator': null,`,
-                `       './invalid-functions-generator': [Object] } }`,
+                util
+                    .inspect(filterObjKey(functions, 'func($arg)'), {
+                        depth: 1,
+                    })
+                    .replace(/^(?!$)/gm, '  '),
             ].join('\n'),
         },
     );
