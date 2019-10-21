@@ -9,3 +9,5 @@ export type isReadonlyOrWritableArray = (
 ) => value is unknown[] | ReadonlyArray<unknown>;
 
 export type ArrayLikeOnly<T> = T extends ReadonlyArray<unknown> ? T : never;
+
+export type FunctionTypeOnly<T> = T extends Function ? T : never;

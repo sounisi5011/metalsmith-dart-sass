@@ -193,8 +193,11 @@ test('When "functions" option is defined by function, option value should be ret
             functions,
         },
     });
-    t.deepEqual(options.sassOptions.functions, functions);
-    if (options.sassOptions.functions) {
+    t.deepEqual(options.sassOptions, { functions });
+    if (
+        typeof options.sassOptions === 'object' &&
+        options.sassOptions.functions
+    ) {
         // It also compares function value references.
         // Note: This test is redundant.
         //       However, the behavior of t.deepEqual() may change due to changes in AVA specifications.
@@ -216,12 +219,16 @@ test('Even if the value of the object of the "functions" option is of various ty
             },
         },
     });
-    t.deepEqual(options.sassOptions.functions, {
-        'pow($base, $exponent)': require(fixtures('./valid-functions-pow')),
-        'sqrt($number)': require(fixtures('./valid-functions-sqrt')),
-        // Note: In order to avoid the side effects of esModuleInterop, require() is used.
-        // eslint-disable-next-line @typescript-eslint/no-var-requires
-        'func($arg)': require(fixtures('./valid-functions-generator'))(null),
-        'func()': func,
+    t.deepEqual(options.sassOptions, {
+        functions: {
+            'pow($base, $exponent)': require(fixtures('./valid-functions-pow')),
+            'sqrt($number)': require(fixtures('./valid-functions-sqrt')),
+            // Note: In order to avoid the side effects of esModuleInterop, require() is used.
+            // eslint-disable-next-line @typescript-eslint/no-var-requires
+            'func($arg)': require(fixtures('./valid-functions-generator'))(
+                null,
+            ),
+            'func()': func,
+        },
     });
 });

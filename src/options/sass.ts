@@ -3,7 +3,7 @@ import util from 'util';
 
 import { hasProp, indent, loadModule } from '../utils';
 import { isFunctionsItem, isImporter } from '../utils/sass';
-import { ArrayLikeOnly } from '../utils/types';
+import { ArrayLikeOnly, FunctionTypeOnly } from '../utils/types';
 import {
     defaultOptions,
     InputOptionsInterface,
@@ -212,6 +212,17 @@ export function normalize(
 ): OptionsInterface['sassOptions'] {
     const defaultOpts = defaultOptions.sassOptions;
     const sassOptions = { ...defaultOpts };
+
+    if (typeof inputOptions === 'string') {
+        return loadModule(
+            inputOptions,
+            err => `Loading sassOptions failed: ${err.message}`,
+        ) as FunctionTypeOnly<InputOptionsInterface['sassOptions']>;
+    }
+
+    if (typeof inputOptions === 'function') {
+        return inputOptions;
+    }
 
     if (inputOptions) {
         Object.assign(sassOptions, inputOptions);
