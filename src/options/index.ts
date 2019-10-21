@@ -3,12 +3,12 @@ import Metalsmith from 'metalsmith';
 import path from 'path';
 import sass from 'sass';
 
-import { loadModule } from '../utils';
 import {
     FileInterface,
     MetalsmithStrictFiles,
     MetalsmithStrictWritableFiles,
 } from '../utils/metalsmith';
+import { loadModule } from '../utils/option';
 import { FunctionTypeOnly, isReadonlyOrWritableArray } from '../utils/types';
 import { normalize as normalizeSassOptions } from './sass';
 
