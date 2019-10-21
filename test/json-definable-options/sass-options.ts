@@ -1,14 +1,11 @@
 import test from 'ava';
 import Metalsmith from 'metalsmith';
 
-import sass from '../../src';
 import { normalizeOptions } from '../../src/options';
-import metalsmithFixtures from '../fixtures';
-import { processAsync } from '../helpers/metalsmith';
-import optionsFixtures from './fixtures';
+import fixtures from './fixtures';
 
 test.before(() => {
-    process.chdir(optionsFixtures());
+    process.chdir(fixtures());
 });
 
 test('should import a script file that defines sassOptions option / export object', async t => {
@@ -19,7 +16,7 @@ test('should import a script file that defines sassOptions option / export objec
         options.sassOptions,
         // Note: In order to avoid the side effects of esModuleInterop, require() is used.
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        require(optionsFixtures('./valid-sass-options-obj')),
+        require(fixtures('./valid-sass-options-obj')),
     );
 });
 
@@ -40,9 +37,7 @@ test('should import a script file that defines sassOptions option / export funct
         await sassOptions(context),
         // Note: In order to avoid the side effects of esModuleInterop, require() is used.
         // eslint-disable-next-line @typescript-eslint/no-var-requires
-        await require(optionsFixtures('./valid-sass-options-generator'))(
-            context,
-        ),
+        await require(fixtures('./valid-sass-options-generator'))(context),
     );
 });
 
@@ -71,10 +66,19 @@ test('should fail import a script file that defines invalid sassOptions option',
 });
 
 test('should fail if define a script file with the sassOptions option and the exported function does not return an object', async t => {
-    const metalsmith = Metalsmith(metalsmithFixtures('simple'))
-        .source('src')
-        .use(sass({ sassOptions: './invalid-sass-options-generator' }));
-    await t.throwsAsync(processAsync(metalsmith), {
+    const { sassOptions } = await normalizeOptions({}, Metalsmith(__dirname), {
+        sassOptions: './invalid-sass-options-generator',
+    });
+
+    if (typeof sassOptions !== 'function') {
+        t.fail('sassOptions option should be a function');
+        t.log({ sassOptions });
+        return;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const context: Parameters<typeof sassOptions>[0] = {} as any;
+    await t.throwsAsync(async () => sassOptions(context), {
         instanceOf: TypeError,
         message: `Invalid sassOptions option. The function exported by this module does not return object: './invalid-sass-options-generator'`,
     });
