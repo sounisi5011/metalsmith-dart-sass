@@ -40,18 +40,28 @@ async function getSassOptions({
     srcFileFullpath: string;
     destFileFullpath: string;
 }): Promise<sass.Options> {
-    const inputSassOptions: sass.Options =
-        typeof options.sassOptions === 'function'
-            ? await options.sassOptions({
-                  filename,
-                  filedata,
-                  sourceFileFullpath: srcFileFullpath,
-                  destinationFileFullpath: destFileFullpath,
-                  metalsmith,
-                  metalsmithFiles: files,
-                  pluginOptions: options,
-              })
-            : options.sassOptions;
+    let inputSassOptions: sass.Options;
+
+    if (typeof options.sassOptions === 'function') {
+        inputSassOptions = await options.sassOptions({
+            filename,
+            filedata,
+            sourceFileFullpath: srcFileFullpath,
+            destinationFileFullpath: destFileFullpath,
+            metalsmith,
+            metalsmithFiles: files,
+            pluginOptions: options,
+        });
+    } else {
+        inputSassOptions = options.sassOptions;
+        if (typeof inputSassOptions.sourceMap === 'string') {
+            throw new TypeError(
+                `String values for SASS sourceMap option are forbidden.` +
+                    ` The Source Map filepath must be define for each file to be processed.` +
+                    ` You need to specify a callback function in sassOptions and define the sourceMap option with a different value for each file.`,
+            );
+        }
+    }
 
     if (typeof inputSassOptions.sourceMap === 'string') {
         inputSassOptions.sourceMap = path.resolve(
