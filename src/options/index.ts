@@ -4,7 +4,11 @@ import path from 'path';
 import sass from 'sass';
 
 import { loadModule } from '../utils';
-import { MetalsmithStrictWritableFiles } from '../utils/metalsmith';
+import {
+    FileInterface,
+    MetalsmithStrictFiles,
+    MetalsmithStrictWritableFiles,
+} from '../utils/metalsmith';
 import { isReadonlyOrWritableArray } from '../utils/types';
 import { normalize as normalizeSassOptions } from './sass';
 
@@ -19,7 +23,17 @@ type OptionsGenerator<T> =
 
 export interface OptionsInterface {
     readonly pattern: ReadonlyArray<string>;
-    readonly sassOptions: sass.Options;
+    readonly sassOptions:
+        | sass.Options
+        | ((context: {
+              filename: string;
+              filedata: FileInterface;
+              sourceFileFullpath: string;
+              destinationFileFullpath: string;
+              metalsmith: Metalsmith;
+              metalsmithFiles: MetalsmithStrictFiles;
+              pluginOptions: OptionsInterface;
+          }) => sass.Options);
     readonly renamer: (filename: string) => string | Promise<string>;
     readonly dependenciesKey: string | false | null;
 }
@@ -40,7 +54,10 @@ export interface InputSassOptionsInterface
 export interface InputOptionsInterface
     extends Omit<OptionsInterface, 'pattern' | 'sassOptions' | 'renamer'> {
     readonly pattern: string | OptionsInterface['pattern'];
-    readonly sassOptions: InputSassOptionsInterface;
+    readonly sassOptions:
+        | string
+        | Exclude<OptionsInterface['sassOptions'], sass.Options>
+        | InputSassOptionsInterface;
     readonly renamer: string | OptionsInterface['renamer'] | boolean | null;
 }
 

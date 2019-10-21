@@ -8,6 +8,7 @@ import {
     defaultOptions,
     InputOptionsInterface,
     InputSassOptionsInterface,
+    OptionsInterface,
 } from '.';
 
 function loadOption<T>({
@@ -208,7 +209,7 @@ function assignInputOption<
 
 export function normalize(
     inputOptions?: InputOptionsInterface['sassOptions'],
-): sass.Options {
+): OptionsInterface['sassOptions'] {
     const defaultOpts = defaultOptions.sassOptions;
     const sassOptions = { ...defaultOpts };
 
