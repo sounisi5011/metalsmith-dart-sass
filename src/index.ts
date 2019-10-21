@@ -80,9 +80,22 @@ async function processFile({
         metalsmithDestFullpath,
         await options.renamer(filename),
     );
+
+    const inputSassOptions: sass.Options =
+        typeof options.sassOptions === 'function'
+            ? await options.sassOptions({
+                  filename,
+                  filedata,
+                  sourceFileFullpath: srcFileFullpath,
+                  destinationFileFullpath: destFileFullpath,
+                  metalsmith,
+                  metalsmithFiles: files,
+                  pluginOptions: options,
+              })
+            : options.sassOptions;
     const sassOptions = {
         indentedSyntax: path.extname(srcFileFullpath) === '.sass',
-        ...options.sassOptions,
+        ...inputSassOptions,
         file: srcFileFullpath,
         outFile: destFileFullpath,
         data: filedata.contents.toString(),
