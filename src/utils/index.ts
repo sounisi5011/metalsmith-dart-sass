@@ -27,6 +27,13 @@ export function filterObj<T>(
     );
 }
 
+export function indent(str: string, space: string | number): string {
+    if (typeof space === 'number') {
+        space = ' '.repeat(space);
+    }
+    return str.replace(/^(?!$)/gm, space);
+}
+
 export function loadModule(
     moduleID: string,
     errorCallback: (error: Error) => Error | string,

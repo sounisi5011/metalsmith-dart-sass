@@ -1,6 +1,7 @@
 import sass from 'sass';
+import util from 'util';
 
-import { hasProp, loadModule } from '../utils';
+import { hasProp, indent, loadModule } from '../utils';
 import { isFunctionsItem, isImporter } from '../utils/sass';
 import { ArrayLikeOnly } from '../utils/types';
 import {
@@ -133,7 +134,22 @@ function normalizeFunctionsEntry({
     } else if (typeof funcCallback === 'function') {
         functions[funcSignature] = funcCallback;
     } else {
-        const [[moduleName, options] = []] = Object.entries(funcCallback);
+        const funcCallbackEntries = Object.entries(funcCallback);
+        if (funcCallbackEntries.length !== 1) {
+            throw new TypeError(
+                `Invalid functions option.` +
+                    ` The number of object properties specified in the function option value must be one.` +
+                    ` But the number of properties is ${funcCallbackEntries.length}:\n` +
+                    indent(
+                        util.inspect(
+                            { [funcSignature]: funcCallback },
+                            { depth: 1 },
+                        ),
+                        2,
+                    ),
+            );
+        }
+        const [moduleName, options] = funcCallbackEntries[0];
         if (moduleName) {
             functions[funcSignature] = loadOptionGenerator({
                 moduleName,
