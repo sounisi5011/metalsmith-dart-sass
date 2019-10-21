@@ -115,6 +115,35 @@ function normalizeImporter(
     return normalizeImporterRecord(inputImporter);
 }
 
+function normalizeFunctionsEntryRecord(
+    funcSignature: string,
+    funcCallback: Record<string, unknown>,
+): Required<sass.Options>['functions'][string] {
+    const funcCallbackEntries = Object.entries(funcCallback);
+    if (funcCallbackEntries.length !== 1) {
+        throw new TypeError(
+            `Invalid functions option.` +
+                ` The number of object properties specified in the function option value must be one.` +
+                ` But the number of properties is ${funcCallbackEntries.length}:\n` +
+                indent(
+                    util.inspect(
+                        { [funcSignature]: funcCallback },
+                        { depth: 1 },
+                    ),
+                    2,
+                ),
+        );
+    }
+    const [moduleName, options] = funcCallbackEntries[0];
+    return loadOptionGenerator({
+        moduleName,
+        options,
+        optionName: 'functions',
+        filter: isFunctionsItem,
+        returnTypeName: 'function',
+    });
+}
+
 function normalizeFunctionsEntry({
     functions,
     funcSignature,
@@ -134,31 +163,10 @@ function normalizeFunctionsEntry({
     } else if (typeof funcCallback === 'function') {
         functions[funcSignature] = funcCallback;
     } else {
-        const funcCallbackEntries = Object.entries(funcCallback);
-        if (funcCallbackEntries.length !== 1) {
-            throw new TypeError(
-                `Invalid functions option.` +
-                    ` The number of object properties specified in the function option value must be one.` +
-                    ` But the number of properties is ${funcCallbackEntries.length}:\n` +
-                    indent(
-                        util.inspect(
-                            { [funcSignature]: funcCallback },
-                            { depth: 1 },
-                        ),
-                        2,
-                    ),
-            );
-        }
-        const [moduleName, options] = funcCallbackEntries[0];
-        if (moduleName) {
-            functions[funcSignature] = loadOptionGenerator({
-                moduleName,
-                options,
-                optionName: 'functions',
-                filter: isFunctionsItem,
-                returnTypeName: 'function',
-            });
-        }
+        functions[funcSignature] = normalizeFunctionsEntryRecord(
+            funcSignature,
+            funcCallback,
+        );
     }
 }
 
