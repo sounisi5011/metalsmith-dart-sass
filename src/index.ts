@@ -27,6 +27,7 @@ async function getSassOptions({
     options,
     filename,
     filedata,
+    metalsmithDestFullpath,
     srcFileFullpath,
     destFileFullpath,
 }: {
@@ -35,6 +36,7 @@ async function getSassOptions({
     options: OptionsInterface;
     filename: string;
     filedata: FileInterface;
+    metalsmithDestFullpath: string;
     srcFileFullpath: string;
     destFileFullpath: string;
 }): Promise<sass.Options> {
@@ -50,6 +52,14 @@ async function getSassOptions({
                   pluginOptions: options,
               })
             : options.sassOptions;
+
+    if (typeof inputSassOptions.sourceMap === 'string') {
+        inputSassOptions.sourceMap = path.resolve(
+            metalsmithDestFullpath,
+            inputSassOptions.sourceMap,
+        );
+    }
+
     return {
         indentedSyntax: path.extname(srcFileFullpath) === '.sass',
         ...inputSassOptions,
@@ -125,6 +135,7 @@ async function processFile({
         options,
         filename,
         filedata,
+        metalsmithDestFullpath,
         srcFileFullpath,
         destFileFullpath,
     });
@@ -160,7 +171,10 @@ async function processFile({
     }
 
     if (result.map) {
-        const sourceMapFullpath = `${destFileFullpath}.map`;
+        const sourceMapFullpath =
+            typeof sassOptions.sourceMap === 'string'
+                ? sassOptions.sourceMap
+                : `${destFileFullpath}.map`;
         const sourceMapFilename = path.relative(
             metalsmithDestFullpath,
             sourceMapFullpath,
