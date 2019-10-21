@@ -105,6 +105,18 @@ function getDependenciesRecord(
     );
 }
 
+function getSourceMapFullpath({
+    sassOptions,
+    destFileFullpath,
+}: {
+    sassOptions: sass.Options;
+    destFileFullpath: string;
+}): string {
+    return typeof sassOptions.sourceMap === 'string'
+        ? sassOptions.sourceMap
+        : `${destFileFullpath}.map`;
+}
+
 async function processFile({
     files,
     writableFiles,
@@ -171,10 +183,10 @@ async function processFile({
     }
 
     if (result.map) {
-        const sourceMapFullpath =
-            typeof sassOptions.sourceMap === 'string'
-                ? sassOptions.sourceMap
-                : `${destFileFullpath}.map`;
+        const sourceMapFullpath = getSourceMapFullpath({
+            sassOptions,
+            destFileFullpath,
+        });
         const sourceMapFilename = path.relative(
             metalsmithDestFullpath,
             sourceMapFullpath,
