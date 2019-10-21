@@ -30,6 +30,7 @@ async function getSassOptions({
     metalsmithDestFullpath,
     srcFileFullpath,
     destFileFullpath,
+    sourceMapFullpathSet,
 }: {
     files: MetalsmithStrictFiles;
     metalsmith: Metalsmith;
@@ -39,6 +40,7 @@ async function getSassOptions({
     metalsmithDestFullpath: string;
     srcFileFullpath: string;
     destFileFullpath: string;
+    sourceMapFullpathSet: Set<string>;
 }): Promise<sass.Options> {
     let inputSassOptions: sass.Options;
 
@@ -68,6 +70,14 @@ async function getSassOptions({
             metalsmithDestFullpath,
             inputSassOptions.sourceMap,
         );
+        if (sourceMapFullpathSet.has(inputSassOptions.sourceMap)) {
+            throw new Error(
+                `Duplicate string value SASS sourceMap option are forbidden.` +
+                    ` The Source Map filepath must be define for each file to be processed.` +
+                    ` You need to define the sourceMap option with a different value for each file.`,
+            );
+        }
+        sourceMapFullpathSet.add(inputSassOptions.sourceMap);
     }
 
     return {
@@ -134,6 +144,7 @@ async function processFile({
     options,
     filename,
     filedata,
+    sourceMapFullpathSet,
 }: {
     files: MetalsmithStrictFiles;
     writableFiles: MetalsmithStrictWritableFiles;
@@ -141,6 +152,7 @@ async function processFile({
     options: OptionsInterface;
     filename: string;
     filedata: FileInterface;
+    sourceMapFullpathSet: Set<string>;
 }): Promise<void> {
     const metalsmithSrcFullpath = metalsmith.path(metalsmith.source());
     const metalsmithDestFullpath = metalsmith.path(metalsmith.destination());
@@ -160,6 +172,7 @@ async function processFile({
         metalsmithDestFullpath,
         srcFileFullpath,
         destFileFullpath,
+        sourceMapFullpathSet,
     });
     const result = await asyncRender(sassOptions);
 
@@ -227,6 +240,7 @@ export = (opts: InputOptions = {}): Metalsmith.Plugin => {
             matchedFilenameList,
         );
 
+        const sourceMapFullpathSet = new Set<string>();
         await Promise.all(
             matchedFilenameList.map(async filename =>
                 processFile({
@@ -236,6 +250,7 @@ export = (opts: InputOptions = {}): Metalsmith.Plugin => {
                     options,
                     filename,
                     filedata: validFiles[filename],
+                    sourceMapFullpathSet,
                 }),
             ),
         );
