@@ -3,7 +3,7 @@ import util from 'util';
 
 import { hasProp, indent, loadModule } from '../utils';
 import { isFunctionsItem, isImporter } from '../utils/sass';
-import { ArrayLikeOnly, FunctionTypeOnly } from '../utils/types';
+import { ArrayLikeOnly } from '../utils/types';
 import {
     defaultOptions,
     InputOptionsInterface,
@@ -217,7 +217,7 @@ export function normalize(
         return loadModule(
             inputOptions,
             err => `Loading sassOptions failed: ${err.message}`,
-        ) as FunctionTypeOnly<InputOptionsInterface['sassOptions']>;
+        ) as OptionsInterface['sassOptions'];
     }
 
     if (typeof inputOptions === 'function') {
