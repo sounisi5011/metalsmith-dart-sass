@@ -144,30 +144,24 @@ function normalizeFunctionsEntryRecord(
     });
 }
 
-function normalizeFunctionsEntry({
-    functions,
-    funcSignature,
-    funcCallback,
-}: {
-    functions: Required<sass.Options>['functions'];
-    funcSignature: string;
-    funcCallback: Required<InputSassOptionsInterface>['functions'][string];
-}): void {
+function normalizeFunctionsEntry(
+    funcSignature: string,
+    funcCallback: Required<InputSassOptionsInterface>['functions'][string],
+): Required<sass.Options>['functions'][string] {
     if (typeof funcCallback === 'string') {
-        functions[funcSignature] = loadOption({
+        return loadOption({
             moduleName: funcCallback,
             optionName: 'functions',
             filter: isFunctionsItem,
             returnTypeName: 'function',
         });
-    } else if (typeof funcCallback === 'function') {
-        functions[funcSignature] = funcCallback;
-    } else {
-        functions[funcSignature] = normalizeFunctionsEntryRecord(
-            funcSignature,
-            funcCallback,
-        );
     }
+
+    if (typeof funcCallback === 'function') {
+        return funcCallback;
+    }
+
+    return normalizeFunctionsEntryRecord(funcSignature, funcCallback);
 }
 
 function normalizeFunctions(
@@ -177,7 +171,10 @@ function normalizeFunctions(
         ReturnType<typeof normalizeFunctions>
     >((functions, [funcSignature, funcCallback]) => {
         if (funcCallback) {
-            normalizeFunctionsEntry({ functions, funcSignature, funcCallback });
+            functions[funcSignature] = normalizeFunctionsEntry(
+                funcSignature,
+                funcCallback,
+            );
         }
         return functions;
     }, {});
