@@ -207,24 +207,24 @@ function assignInputOption<
 }
 
 export function normalize(
-    inputOptions?: InputOptionsInterface['options'],
+    inputOptions?: InputOptionsInterface['sassOptions'],
 ): sass.Options {
-    const defaultOpts = defaultOptions.options;
-    const options = { ...defaultOpts };
+    const defaultOpts = defaultOptions.sassOptions;
+    const sassOptions = { ...defaultOpts };
 
     if (inputOptions) {
-        Object.assign(options, inputOptions);
-        assignInputOption(options, 'importer', {
+        Object.assign(sassOptions, inputOptions);
+        assignInputOption(sassOptions, 'importer', {
             inputOptions,
             defaultOpts,
             normalizer: normalizeImporter,
         });
-        assignInputOption(options, 'functions', {
+        assignInputOption(sassOptions, 'functions', {
             inputOptions,
             defaultOpts,
             normalizer: normalizeFunctions,
         });
     }
 
-    return options;
+    return sassOptions;
 }

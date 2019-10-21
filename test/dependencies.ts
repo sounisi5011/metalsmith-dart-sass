@@ -123,7 +123,7 @@ test('should export dependencies files with node modules include', async t => {
         .use(debuggerPlugin(files => (beforeFiles = { ...files })))
         .use(
             sass({
-                options: { includePaths: ['node_modules'] },
+                sassOptions: { includePaths: ['node_modules'] },
                 dependenciesKey,
             }),
         );

@@ -82,7 +82,7 @@ async function processFile({
     );
     const sassOptions = {
         indentedSyntax: path.extname(srcFileFullpath) === '.sass',
-        ...options.options,
+        ...options.sassOptions,
         file: srcFileFullpath,
         outFile: destFileFullpath,
         data: filedata.contents.toString(),

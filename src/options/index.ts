@@ -19,7 +19,7 @@ type OptionsGenerator<T> =
 
 export interface OptionsInterface {
     readonly pattern: ReadonlyArray<string>;
-    readonly options: sass.Options;
+    readonly sassOptions: sass.Options;
     readonly renamer: (filename: string) => string | Promise<string>;
     readonly dependenciesKey: string | false | null;
 }
@@ -38,9 +38,9 @@ export interface InputSassOptionsInterface
 }
 
 export interface InputOptionsInterface
-    extends Omit<OptionsInterface, 'pattern' | 'options' | 'renamer'> {
+    extends Omit<OptionsInterface, 'pattern' | 'sassOptions' | 'renamer'> {
     readonly pattern: string | OptionsInterface['pattern'];
-    readonly options: InputSassOptionsInterface;
+    readonly sassOptions: InputSassOptionsInterface;
     readonly renamer: string | OptionsInterface['renamer'] | boolean | null;
 }
 
@@ -53,7 +53,7 @@ export const defaultOptions: OptionsInterface = deepFreeze({
      */
     pattern: ['**/*.sass', '**/*.scss', '!**/_*'],
     plugins: [],
-    options: {},
+    sassOptions: {},
     renamer(filename) {
         const newFilename =
             path.basename(filename, path.extname(filename)) + '.css';
@@ -117,7 +117,7 @@ export async function normalizeOptions(
         ...defaultOptions,
         ...opts,
         pattern: normalizePattern(opts.pattern),
-        options: normalizeSassOptions(opts.options),
+        sassOptions: normalizeSassOptions(opts.sassOptions),
         renamer: normalizeRenamer(opts.renamer),
     };
 }

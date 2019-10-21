@@ -14,7 +14,7 @@ test.before(() => {
 
 test('should import a script file that defines "functions" option', async t => {
     const options = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             functions: {
                 'pow($base, $exponent)': './valid-functions-pow',
                 'sqrt($number)': './valid-functions-sqrt',
@@ -22,7 +22,7 @@ test('should import a script file that defines "functions" option', async t => {
         },
     });
     const expectedOptions = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             functions: {
                 'pow($base, $exponent)': require(fixtures(
                     './valid-functions-pow',
@@ -37,7 +37,7 @@ test('should import a script file that defines "functions" option', async t => {
 test('should fail import a non exist script file that defines "functions" option', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 functions: {
                     'pow($base, $exponent)': './valid-functions-pow',
                     'sqrt($number)': './non-exist',
@@ -54,7 +54,7 @@ test('should fail import a non exist script file that defines "functions" option
 test('should fail import a script file that defines invalid "functions" option', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 functions: {
                     'pow($base, $exponent)': './valid-functions-pow',
                     'sqrt($number)': './invalid-functions',
@@ -72,7 +72,7 @@ test('should fail import a script file that defines invalid "functions" option',
 
 test('If "functions" option is defined in object, script file should be imported', async t => {
     const options = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             functions: {
                 'func($arg)': {
                     './valid-functions-generator': null,
@@ -81,7 +81,7 @@ test('If "functions" option is defined in object, script file should be imported
         },
     });
     const expectedOptions = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             functions: {
                 'func($arg)':
                     // Note: In order to avoid the side effects of esModuleInterop, require() is used.
@@ -96,7 +96,7 @@ test('If "functions" option is defined in object, script file should be imported
 test('should fail import a non exist script file that defines "functions" option / defined in object', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 functions: {
                     'func($arg)': {
                         './non-exist': null,
@@ -114,7 +114,7 @@ test('should fail import a non exist script file that defines "functions" option
 test('should fail if the script file specified in the "functions" option does not export the function / defined in object', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 functions: {
                     'func($arg)': {
                         './invalid-generator': null,
@@ -132,7 +132,7 @@ test('should fail if the script file specified in the "functions" option does no
 test('should fail import a script file that defines invalid "functions" option / defined in object', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 functions: {
                     'func($arg)': {
                         './invalid-functions-generator': {},
@@ -164,7 +164,7 @@ test('If the number of object properties specified in the "functions" option val
     };
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 functions,
             },
         }),
@@ -189,16 +189,16 @@ test('When "functions" option is defined by function, option value should be ret
         'func()': () => {},
     };
     const options = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             functions,
         },
     });
-    t.deepEqual(options.options.functions, functions);
-    if (options.options.functions) {
+    t.deepEqual(options.sassOptions.functions, functions);
+    if (options.sassOptions.functions) {
         // It also compares function value references.
         // Note: This test is redundant.
         //       However, the behavior of t.deepEqual() may change due to changes in AVA specifications.
-        t.is(options.options.functions['func()'], functions['func()']);
+        t.is(options.sassOptions.functions['func()'], functions['func()']);
     }
 });
 
@@ -207,7 +207,7 @@ test('When "functions" option is defined by function, option value should be ret
 test('Even if the value of the object of the "functions" option is of various types, all values should be converted to functions', async t => {
     const func = (): void => {};
     const options = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             functions: {
                 'pow($base, $exponent)': './valid-functions-pow',
                 'sqrt($number)': './valid-functions-sqrt',
@@ -216,7 +216,7 @@ test('Even if the value of the object of the "functions" option is of various ty
             },
         },
     });
-    t.deepEqual(options.options.functions, {
+    t.deepEqual(options.sassOptions.functions, {
         'pow($base, $exponent)': require(fixtures('./valid-functions-pow')),
         'sqrt($number)': require(fixtures('./valid-functions-sqrt')),
         // Note: In order to avoid the side effects of esModuleInterop, require() is used.
