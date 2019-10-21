@@ -33,7 +33,7 @@ test('defaultOptions cannot be changed', async t => {
                 );
 
                 ignoreTypeError(() => {
-                    defaultOptions.options.sourceMap = true;
+                    defaultOptions.sassOptions.sourceMap = true;
                 });
                 t.deepEqual(
                     defaultOptions,

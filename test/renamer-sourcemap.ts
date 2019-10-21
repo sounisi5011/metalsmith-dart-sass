@@ -34,7 +34,7 @@ for (const renamer of [
                 .source('src')
                 .use(
                     sass({
-                        options: { sourceMap: true },
+                        sassOptions: { sourceMap: true },
                         renamer:
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             renamer as any,
@@ -123,7 +123,7 @@ for (const renamer of [false, 0, -0, NaN, '', null]) {
                 .source('src')
                 .use(
                     sass({
-                        options: { sourceMap: true },
+                        sassOptions: { sourceMap: true },
                         renamer:
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                             renamer as any,
@@ -208,7 +208,7 @@ test('should generate Source Map files with custom renamer', async t => {
         .source('src')
         .use(
             sass({
-                options: { sourceMap: true },
+                sassOptions: { sourceMap: true },
                 renamer(filename) {
                     return `${filename}-css`;
                 },

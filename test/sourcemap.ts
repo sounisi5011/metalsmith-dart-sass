@@ -10,7 +10,7 @@ import { isValidSourceMap } from './helpers/source-map';
 test('should generate Source Map files', async t => {
     const metalsmith = Metalsmith(fixtures('simple'))
         .source('src')
-        .use(sass({ options: { sourceMap: true } }));
+        .use(sass({ sassOptions: { sourceMap: true } }));
     const files = await processAsync(metalsmith);
 
     switchTest(
@@ -118,7 +118,7 @@ test('should generate Source Map files', async t => {
 test('should generate Source Map files with modules', async t => {
     const metalsmith = Metalsmith(fixtures('modules'))
         .source('src')
-        .use(sass({ options: { sourceMap: true } }));
+        .use(sass({ sassOptions: { sourceMap: true } }));
     const files = await processAsync(metalsmith);
 
     switchTest(

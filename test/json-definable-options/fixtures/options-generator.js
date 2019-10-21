@@ -1,7 +1,7 @@
 module.exports = (files, metalsmith, defaultOptions) => {
   return {
     pattern: [...defaultOptions.pattern, '!**/_*/**'],
-    options: {
+    sassOptions: {
       includePaths: ['node_modules'],
       outputStyle: 'compressed',
       linefeed: 'crlf',

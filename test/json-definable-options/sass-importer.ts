@@ -15,12 +15,12 @@ test.before(() => {
 
 test('should import a script file that defines importer option', async t => {
     const options = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             importer: './valid-importer',
         },
     });
     const expectedOptions = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             importer: require(fixtures('./valid-importer')),
         },
     });
@@ -30,7 +30,7 @@ test('should import a script file that defines importer option', async t => {
 test('should fail import a non exist script file that defines importer option', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 importer: './non-exist',
             },
         }),
@@ -44,7 +44,7 @@ test('should fail import a non exist script file that defines importer option', 
 test('should fail import a script file that defines invalid importer option', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 importer: './invalid-importer',
             },
         }),
@@ -60,7 +60,7 @@ test('should fail import a script file that defines invalid importer option', as
 test('If importer option is defined in object, package should be imported', async t => {
     const packageImporterOptions = {};
     const options = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             importer: {
                 'node-sass-once-importer': null,
                 'node-sass-package-importer': packageImporterOptions,
@@ -68,19 +68,19 @@ test('If importer option is defined in object, package should be imported', asyn
         },
     });
 
-    if (!Array.isArray(options.options.importer)) {
+    if (!Array.isArray(options.sassOptions.importer)) {
         t.fail('importer option should return an array');
         t.log({
-            importer: options.options.importer,
+            importer: options.sassOptions.importer,
         });
         return;
     }
-    t.is(options.options.importer.length, 2);
-    t.is(typeof options.options.importer[0], 'function');
-    t.is(String(options.options.importer[0]), String(onceImporter()));
-    t.is(typeof options.options.importer[1], 'function');
+    t.is(options.sassOptions.importer.length, 2);
+    t.is(typeof options.sassOptions.importer[0], 'function');
+    t.is(String(options.sassOptions.importer[0]), String(onceImporter()));
+    t.is(typeof options.sassOptions.importer[1], 'function');
     t.is(
-        String(options.options.importer[1]),
+        String(options.sassOptions.importer[1]),
         String(packageImporter(packageImporterOptions)),
     );
 });
@@ -88,7 +88,7 @@ test('If importer option is defined in object, package should be imported', asyn
 test('should fail import a non exist script file that defines importer option / defined in object', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 importer: {
                     './non-exist': {},
                 },
@@ -104,7 +104,7 @@ test('should fail import a non exist script file that defines importer option / 
 test('should fail if the script file specified in the importer option does not export the function / defined in object', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 importer: {
                     './invalid-generator': {},
                 },
@@ -120,7 +120,7 @@ test('should fail if the script file specified in the importer option does not e
 test('should fail import a script file that defines invalid importer option / defined in object', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 importer: {
                     './invalid-importer-generator': {},
                 },
@@ -138,23 +138,23 @@ test('should fail import a script file that defines invalid importer option / de
 test('When importer option is defined by function, option value should be returned without processing', async t => {
     const importer = packageImporter({});
     const options = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             importer,
         },
     });
-    t.is(options.options.importer, importer);
+    t.is(options.sassOptions.importer, importer);
 });
 
 // importer: string[]
 
 test('should import a script file that defines importer option / defined in string array', async t => {
     const options = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             importer: ['./valid-importer'],
         },
     });
     const expectedOptions = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             importer: flatArray([
                 // Note: In order to avoid the side effects of esModuleInterop, require() is used.
                 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -168,7 +168,7 @@ test('should import a script file that defines importer option / defined in stri
 test('should fail import a non exist script file that defines importer option / defined in string array', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 importer: ['./non-exist'],
             },
         }),
@@ -182,7 +182,7 @@ test('should fail import a non exist script file that defines importer option / 
 test('should fail import a script file that defines invalid importer option / defined in string array', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 importer: ['./invalid-importer'],
             },
         }),
@@ -198,7 +198,7 @@ test('should fail import a script file that defines invalid importer option / de
 test('If importer option is defined in object, package should be imported / defined in object array', async t => {
     const packageImporterOptions = {};
     const options = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             importer: [
                 {
                     'node-sass-once-importer': null,
@@ -208,19 +208,19 @@ test('If importer option is defined in object, package should be imported / defi
         },
     });
 
-    if (!Array.isArray(options.options.importer)) {
+    if (!Array.isArray(options.sassOptions.importer)) {
         t.fail('importer option should return an array');
         t.log({
-            importer: options.options.importer,
+            importer: options.sassOptions.importer,
         });
         return;
     }
-    t.is(options.options.importer.length, 2);
-    t.is(typeof options.options.importer[0], 'function');
-    t.is(String(options.options.importer[0]), String(onceImporter()));
-    t.is(typeof options.options.importer[1], 'function');
+    t.is(options.sassOptions.importer.length, 2);
+    t.is(typeof options.sassOptions.importer[0], 'function');
+    t.is(String(options.sassOptions.importer[0]), String(onceImporter()));
+    t.is(typeof options.sassOptions.importer[1], 'function');
     t.is(
-        String(options.options.importer[1]),
+        String(options.sassOptions.importer[1]),
         String(packageImporter(packageImporterOptions)),
     );
 });
@@ -228,7 +228,7 @@ test('If importer option is defined in object, package should be imported / defi
 test('should fail import a non exist script file that defines importer option / defined in object array', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 importer: [
                     {
                         './non-exist': {},
@@ -246,7 +246,7 @@ test('should fail import a non exist script file that defines importer option / 
 test('should fail if the script file specified in the importer option does not export the function / defined in object array', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 importer: [
                     {
                         './invalid-generator': {},
@@ -264,7 +264,7 @@ test('should fail if the script file specified in the importer option does not e
 test('should fail import a script file that defines invalid importer option / defined in object array', async t => {
     await t.throwsAsync(
         normalizeOptions({}, Metalsmith(__dirname), {
-            options: {
+            sassOptions: {
                 importer: [
                     {
                         './invalid-importer-generator': {},
@@ -284,11 +284,11 @@ test('should fail import a script file that defines invalid importer option / de
 test('When importer option is defined by function array, option value must be returned without processing', async t => {
     const importer = [onceImporter(), packageImporter({})];
     const options = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             importer,
         },
     });
-    t.is(options.options.importer, importer);
+    t.is(options.sassOptions.importer, importer);
 });
 
 // importer: (string | Record<string, unknown> | sass.Importer)[]
@@ -296,7 +296,7 @@ test('When importer option is defined by function array, option value must be re
 test('Even if the array value of the importer option has various types, it is necessary to process all importers', async t => {
     const importer = (): void => {};
     const options = await normalizeOptions({}, Metalsmith(__dirname), {
-        options: {
+        sassOptions: {
             importer: [
                 './valid-importer',
                 { './valid-importer-generator': null },
@@ -305,7 +305,7 @@ test('Even if the array value of the importer option has various types, it is ne
         },
     });
     t.deepEqual(
-        options.options.importer,
+        options.sassOptions.importer,
         flatArray([
             require(fixtures('./valid-importer')),
             // Note: In order to avoid the side effects of esModuleInterop, require() is used.
