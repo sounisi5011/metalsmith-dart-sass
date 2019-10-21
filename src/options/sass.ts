@@ -200,6 +200,24 @@ function toSassOptionsGenerator(
     };
 }
 
+function importSassOptions(
+    moduleName: string,
+): OptionsInterface['sassOptions'] {
+    const exportedValue = loadModule(
+        moduleName,
+        err => `Loading sassOptions option failed: ${err.message}`,
+    );
+    if (isSassOptionsObject(exportedValue)) {
+        return exportedValue;
+    }
+    if (typeof exportedValue === 'function') {
+        return toSassOptionsGenerator(exportedValue, { moduleName });
+    }
+    throw new TypeError(
+        `Invalid sassOptions option. Module does not export object or function: '${moduleName}'`,
+    );
+}
+
 function assignInputOption<
     T extends object,
     U extends object,
@@ -233,20 +251,7 @@ export function normalize(
     const sassOptions = { ...defaultOpts };
 
     if (typeof inputOptions === 'string') {
-        const moduleName = inputOptions;
-        const exportedValue = loadModule(
-            moduleName,
-            err => `Loading sassOptions option failed: ${err.message}`,
-        );
-        if (isSassOptionsObject(exportedValue)) {
-            return exportedValue;
-        }
-        if (typeof exportedValue === 'function') {
-            return toSassOptionsGenerator(exportedValue, { moduleName });
-        }
-        throw new TypeError(
-            `Invalid sassOptions option. Module does not export object or function: '${moduleName}'`,
-        );
+        return importSassOptions(inputOptions);
     }
 
     if (typeof inputOptions === 'function') {
