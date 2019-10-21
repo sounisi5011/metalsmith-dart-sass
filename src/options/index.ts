@@ -3,10 +3,13 @@ import Metalsmith from 'metalsmith';
 import path from 'path';
 import sass from 'sass';
 
-import { MetalsmithStrictWritableFiles } from './utils/metalsmith';
-import { isReadonlyOrWritableArray } from './utils/types';
+import { loadModule } from '../utils';
+import { MetalsmithStrictWritableFiles } from '../utils/metalsmith';
+import { isReadonlyOrWritableArray } from '../utils/types';
+import { normalize as normalizeSassOptions } from './sass';
 
 type OptionsGenerator<T> =
+    | string
     | T
     | ((
           files: MetalsmithStrictWritableFiles,
@@ -21,10 +24,24 @@ export interface OptionsInterface {
     readonly dependenciesKey: string | false | null;
 }
 
+type InputSassImporter = string | Record<string, unknown> | sass.Importer;
+
+type InputSassFunctionsValue =
+    | string
+    | Record<string, unknown>
+    | Required<sass.Options>['functions'][string];
+
+export interface InputSassOptionsInterface
+    extends Omit<sass.Options, 'importer' | 'functions'> {
+    importer?: InputSassImporter | InputSassImporter[];
+    functions?: Record<string, InputSassFunctionsValue>;
+}
+
 export interface InputOptionsInterface
-    extends Omit<OptionsInterface, 'pattern' | 'renamer'> {
+    extends Omit<OptionsInterface, 'pattern' | 'options' | 'renamer'> {
     readonly pattern: string | OptionsInterface['pattern'];
-    readonly renamer: OptionsInterface['renamer'] | boolean | null;
+    readonly options: InputSassOptionsInterface;
+    readonly renamer: string | OptionsInterface['renamer'] | boolean | null;
 }
 
 export type InputOptions = OptionsGenerator<Partial<InputOptionsInterface>>;
@@ -62,11 +79,22 @@ function normalizePattern(
 function normalizeRenamer(
     inputRenamer?: InputOptionsInterface['renamer'],
 ): OptionsInterface['renamer'] {
-    return typeof inputRenamer === 'function'
-        ? inputRenamer
-        : inputRenamer || inputRenamer === undefined
-        ? defaultOptions.renamer
-        : (filename: string) => filename;
+    if (typeof inputRenamer === 'string' && inputRenamer !== '') {
+        inputRenamer = loadModule(
+            inputRenamer,
+            err => `Loading renamer failed: ${err.message}`,
+        ) as Exclude<typeof inputRenamer, string>;
+    }
+
+    if (typeof inputRenamer === 'function') {
+        return inputRenamer;
+    }
+
+    if (inputRenamer || inputRenamer === undefined) {
+        return defaultOptions.renamer;
+    }
+
+    return (filename: string) => filename;
 }
 
 export async function normalizeOptions(
@@ -74,6 +102,13 @@ export async function normalizeOptions(
     metalsmith: Metalsmith,
     opts: InputOptions,
 ): Promise<OptionsInterface> {
+    if (typeof opts === 'string') {
+        opts = loadModule(
+            opts,
+            err => `Loading options failed: ${err.message}`,
+        ) as Exclude<InputOptions, string>;
+    }
+
     if (typeof opts === 'function') {
         opts = await opts(files, metalsmith, defaultOptions);
     }
@@ -82,6 +117,7 @@ export async function normalizeOptions(
         ...defaultOptions,
         ...opts,
         pattern: normalizePattern(opts.pattern),
+        options: normalizeSassOptions(opts.options),
         renamer: normalizeRenamer(opts.renamer),
     };
 }
