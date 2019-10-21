@@ -1,5 +1,3 @@
-import importCwd from 'import-cwd';
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function isObject(value: unknown): value is Record<any, unknown> {
     return typeof value === 'object' && value !== null;
@@ -32,16 +30,4 @@ export function indent(str: string, space: string | number): string {
         space = ' '.repeat(space);
     }
     return str.replace(/^(?!$)/gm, space);
-}
-
-export function loadModule(
-    moduleID: string,
-    errorCallback: (error: Error) => Error | string,
-): unknown {
-    try {
-        return importCwd(moduleID);
-    } catch (error) {
-        const err = errorCallback(error);
-        throw typeof err === 'string' ? new Error(err) : err;
-    }
 }

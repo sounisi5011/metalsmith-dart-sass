@@ -68,6 +68,13 @@ test('If importer option is defined in object, package should be imported', asyn
         },
     });
 
+    if (typeof options.sassOptions !== 'object') {
+        t.fail('sassOptions option should be an object');
+        t.log({
+            sassOptions: options.sassOptions,
+        });
+        return;
+    }
     if (!Array.isArray(options.sassOptions.importer)) {
         t.fail('importer option should return an array');
         t.log({
@@ -142,7 +149,7 @@ test('When importer option is defined by function, option value should be return
             importer,
         },
     });
-    t.is(options.sassOptions.importer, importer);
+    t.deepEqual(options.sassOptions, { importer });
 });
 
 // importer: string[]
@@ -208,6 +215,13 @@ test('If importer option is defined in object, package should be imported / defi
         },
     });
 
+    if (typeof options.sassOptions !== 'object') {
+        t.fail('sassOptions option should be an object');
+        t.log({
+            sassOptions: options.sassOptions,
+        });
+        return;
+    }
     if (!Array.isArray(options.sassOptions.importer)) {
         t.fail('importer option should return an array');
         t.log({
@@ -288,7 +302,7 @@ test('When importer option is defined by function array, option value must be re
             importer,
         },
     });
-    t.is(options.sassOptions.importer, importer);
+    t.deepEqual(options.sassOptions, { importer });
 });
 
 // importer: (string | Record<string, unknown> | sass.Importer)[]
@@ -304,14 +318,13 @@ test('Even if the array value of the importer option has various types, it is ne
             ],
         },
     });
-    t.deepEqual(
-        options.sassOptions.importer,
-        flatArray([
+    t.deepEqual(options.sassOptions, {
+        importer: flatArray([
             require(fixtures('./valid-importer')),
             // Note: In order to avoid the side effects of esModuleInterop, require() is used.
             // eslint-disable-next-line @typescript-eslint/no-var-requires
             require(fixtures('./valid-importer-generator'))(null),
             importer,
         ]),
-    );
+    });
 });

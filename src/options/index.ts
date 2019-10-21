@@ -3,9 +3,13 @@ import Metalsmith from 'metalsmith';
 import path from 'path';
 import sass from 'sass';
 
-import { loadModule } from '../utils';
-import { MetalsmithStrictWritableFiles } from '../utils/metalsmith';
-import { isReadonlyOrWritableArray } from '../utils/types';
+import {
+    FileInterface,
+    MetalsmithStrictFiles,
+    MetalsmithStrictWritableFiles,
+} from '../utils/metalsmith';
+import { loadModule } from '../utils/option';
+import { FunctionTypeOnly, isReadonlyOrWritableArray } from '../utils/types';
 import { normalize as normalizeSassOptions } from './sass';
 
 type OptionsGenerator<T> =
@@ -14,14 +18,32 @@ type OptionsGenerator<T> =
     | ((
           files: MetalsmithStrictWritableFiles,
           metalsmith: Metalsmith,
-          defaultOptions: OptionsInterface,
+          defaultOptions: DefaultOptionsInterface,
       ) => T | Promise<T>);
 
 export interface OptionsInterface {
     readonly pattern: ReadonlyArray<string>;
-    readonly sassOptions: sass.Options;
+    readonly sassOptions:
+        | sass.Options
+        | ((context: {
+              filename: string;
+              filedata: FileInterface;
+              sourceFileFullpath: string;
+              destinationFileFullpath: string;
+              metalsmith: Metalsmith;
+              metalsmithFiles: MetalsmithStrictFiles;
+              pluginOptions: OptionsInterface;
+          }) => sass.Options | Promise<sass.Options>);
     readonly renamer: (filename: string) => string | Promise<string>;
     readonly dependenciesKey: string | false | null;
+}
+
+export interface DefaultOptionsInterface
+    extends Omit<OptionsInterface, 'sassOptions'> {
+    readonly sassOptions: Exclude<
+        OptionsInterface['sassOptions'],
+        FunctionTypeOnly<OptionsInterface['sassOptions']>
+    >;
 }
 
 type InputSassImporter = string | Record<string, unknown> | sass.Importer;
@@ -40,13 +62,16 @@ export interface InputSassOptionsInterface
 export interface InputOptionsInterface
     extends Omit<OptionsInterface, 'pattern' | 'sassOptions' | 'renamer'> {
     readonly pattern: string | OptionsInterface['pattern'];
-    readonly sassOptions: InputSassOptionsInterface;
+    readonly sassOptions:
+        | string
+        | Exclude<OptionsInterface['sassOptions'], sass.Options>
+        | InputSassOptionsInterface;
     readonly renamer: string | OptionsInterface['renamer'] | boolean | null;
 }
 
 export type InputOptions = OptionsGenerator<Partial<InputOptionsInterface>>;
 
-export const defaultOptions: OptionsInterface = deepFreeze({
+export const defaultOptions: DefaultOptionsInterface = deepFreeze({
     /**
      * Partial files whose names begin with an underscore should be excluded from conversion.
      * @see https://sass-lang.com/guide#topic-4

@@ -21,6 +21,44 @@ const debug = createDebug(require('../package.json').name);
 
 const asyncRender = util.promisify(sass.render);
 
+async function getSassOptions({
+    files,
+    metalsmith,
+    options,
+    filename,
+    filedata,
+    srcFileFullpath,
+    destFileFullpath,
+}: {
+    files: MetalsmithStrictFiles;
+    metalsmith: Metalsmith;
+    options: OptionsInterface;
+    filename: string;
+    filedata: FileInterface;
+    srcFileFullpath: string;
+    destFileFullpath: string;
+}): Promise<sass.Options> {
+    const inputSassOptions: sass.Options =
+        typeof options.sassOptions === 'function'
+            ? await options.sassOptions({
+                  filename,
+                  filedata,
+                  sourceFileFullpath: srcFileFullpath,
+                  destinationFileFullpath: destFileFullpath,
+                  metalsmith,
+                  metalsmithFiles: files,
+                  pluginOptions: options,
+              })
+            : options.sassOptions;
+    return {
+        indentedSyntax: path.extname(srcFileFullpath) === '.sass',
+        ...inputSassOptions,
+        file: srcFileFullpath,
+        outFile: destFileFullpath,
+        data: filedata.contents.toString(),
+    };
+}
+
 function getDependenciesRecord(
     includedFiles: ReadonlyArray<string>,
     {
@@ -80,14 +118,16 @@ async function processFile({
         metalsmithDestFullpath,
         await options.renamer(filename),
     );
-    const sassOptions = {
-        indentedSyntax: path.extname(srcFileFullpath) === '.sass',
-        ...options.sassOptions,
-        file: srcFileFullpath,
-        outFile: destFileFullpath,
-        data: filedata.contents.toString(),
-    };
 
+    const sassOptions = await getSassOptions({
+        files,
+        metalsmith,
+        options,
+        filename,
+        filedata,
+        srcFileFullpath,
+        destFileFullpath,
+    });
     const result = await asyncRender(sassOptions);
 
     const dependencies: Record<string, Record<string, unknown>> | undefined =
