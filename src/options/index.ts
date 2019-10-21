@@ -38,7 +38,7 @@ export interface OptionsInterface {
     readonly dependenciesKey: string | false | null;
 }
 
-interface DefaultOptionsInterface
+export interface DefaultOptionsInterface
     extends Omit<OptionsInterface, 'sassOptions'> {
     readonly sassOptions: Exclude<
         OptionsInterface['sassOptions'],
