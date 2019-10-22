@@ -185,7 +185,10 @@ export async function getSassOptions({
             metalsmithFiles: files,
             pluginOptions: options,
         });
-        if (typeof inputSassOptions.indentedSyntax !== 'boolean') {
+        if (
+            hasProp(inputSassOptions, 'indentedSyntax') &&
+            typeof inputSassOptions.indentedSyntax !== 'boolean'
+        ) {
             throw new TypeError(
                 `Non-boolean values are prohibited in the indentedSyntax option of the return value of the callback function sassOptions.` +
                     ` If you want to specify a glob pattern string or an array of strings, you need to specify a plain object in the sassOptions option.`,
