@@ -117,6 +117,35 @@ export function normalize(
     return sassOptions;
 }
 
+function obj2sassOptions({
+    sassOptionsObj,
+    filename,
+}: {
+    sassOptionsObj: SassOptionsObjectInterface;
+    filename: string;
+}): sass.Options {
+    if (typeof sassOptionsObj.sourceMap === 'string') {
+        throw new TypeError(
+            `String values for SASS sourceMap option are forbidden.` +
+                ` The Source Map filepath must be define for each file to be processed.` +
+                ` You need to specify a callback function in sassOptions and define the sourceMap option with a different value for each file.`,
+        );
+    }
+
+    const { indentedSyntax, ...otherSassOptions } = sassOptionsObj;
+    const sassOptions: sass.Options = {
+        ...otherSassOptions,
+    };
+
+    if (indentedSyntax !== undefined) {
+        const indentedSyntaxPatterns = ([] as string[]).concat(indentedSyntax);
+        sassOptions.indentedSyntax =
+            multimatch([filename], indentedSyntaxPatterns).length > 0;
+    }
+
+    return sassOptions;
+}
+
 export async function getSassOptions({
     files,
     metalsmith,
@@ -149,25 +178,10 @@ export async function getSassOptions({
             pluginOptions: options,
         });
     } else {
-        const sassOptionsObj = options.sassOptions;
-        if (typeof sassOptionsObj.sourceMap === 'string') {
-            throw new TypeError(
-                `String values for SASS sourceMap option are forbidden.` +
-                    ` The Source Map filepath must be define for each file to be processed.` +
-                    ` You need to specify a callback function in sassOptions and define the sourceMap option with a different value for each file.`,
-            );
-        }
-        const { indentedSyntax, ...otherSassOptions } = sassOptionsObj;
-        inputSassOptions = {
-            ...otherSassOptions,
-        };
-        if (indentedSyntax !== undefined) {
-            const indentedSyntaxPatterns = ([] as string[]).concat(
-                indentedSyntax,
-            );
-            inputSassOptions.indentedSyntax =
-                multimatch([filename], indentedSyntaxPatterns).length > 0;
-        }
+        inputSassOptions = obj2sassOptions({
+            sassOptionsObj: options.sassOptions,
+            filename,
+        });
     }
 
     if (typeof inputSassOptions.sourceMap === 'string') {
