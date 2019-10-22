@@ -21,10 +21,21 @@ type OptionsGenerator<T> =
           defaultOptions: DefaultOptionsInterface,
       ) => T | Promise<T>);
 
+export interface SassOptionsObjectInterface
+    extends Omit<sass.Options, 'indentedSyntax'> {
+    /**
+     * Glob patterns that match files that use the Indented Syntax.
+     * For files that match the pattern, set Dart Sass's indentedSyntax option to true.
+     * @see https://sass-lang.com/documentation/syntax#the-indented-syntax
+     * @see https://sass-lang.com/documentation/js-api#indentedsyntax
+     */
+    indentedSyntax?: string | ReadonlyArray<string>;
+}
+
 export interface OptionsInterface {
     readonly pattern: ReadonlyArray<string>;
     readonly sassOptions:
-        | sass.Options
+        | SassOptionsObjectInterface
         | ((context: {
               filename: string;
               filedata: FileInterface;
@@ -51,11 +62,17 @@ type InputSassImporter = string | Record<string, unknown> | sass.Importer;
 type InputSassFunctionsValue =
     | string
     | Record<string, unknown>
-    | Required<sass.Options>['functions'][string];
+    | Required<SassOptionsObjectInterface>['functions'][string];
 
 export interface InputSassOptionsInterface
-    extends Omit<sass.Options, 'sourceMap' | 'importer' | 'functions'> {
-    sourceMap?: Exclude<Required<sass.Options>['sourceMap'], string>;
+    extends Omit<
+        SassOptionsObjectInterface,
+        'sourceMap' | 'importer' | 'functions'
+    > {
+    sourceMap?: Exclude<
+        Required<SassOptionsObjectInterface>['sourceMap'],
+        string
+    >;
     importer?: InputSassImporter | InputSassImporter[];
     functions?: Record<string, InputSassFunctionsValue>;
 }
@@ -65,7 +82,7 @@ export interface InputOptionsInterface
     readonly pattern: string | OptionsInterface['pattern'];
     readonly sassOptions:
         | string
-        | Exclude<OptionsInterface['sassOptions'], sass.Options>
+        | Exclude<OptionsInterface['sassOptions'], SassOptionsObjectInterface>
         | InputSassOptionsInterface;
     readonly renamer: string | OptionsInterface['renamer'] | boolean | null;
 }

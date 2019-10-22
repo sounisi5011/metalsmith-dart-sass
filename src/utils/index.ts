@@ -25,6 +25,26 @@ export function filterObj<T>(
     );
 }
 
+export function omitUndefProps<T extends object>(
+    obj: Readonly<T>,
+    props: ReadonlyArray<keyof T> = [],
+): T {
+    const newObj = {} as T;
+    for (const [prop, desc] of Object.entries(
+        Object.getOwnPropertyDescriptors(obj),
+    )) {
+        if (
+            hasProp(desc, 'value') &&
+            desc.value === undefined &&
+            (props.length < 1 || props.includes(prop as (keyof T)))
+        ) {
+            continue;
+        }
+        Object.defineProperty(newObj, prop, desc);
+    }
+    return newObj;
+}
+
 export function indent(str: string, space: string | number): string {
     if (typeof space === 'number') {
         space = ' '.repeat(space);
