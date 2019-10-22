@@ -24,9 +24,12 @@ test('should generate inline Source Map files', async t => {
     );
 
     const expectedCssTextRegExp = new RegExp(
-        `^${escapeStringRegexp(
-            'body {\n  font: 100% Helvetica, sans-serif;\n  color: #333;\n}',
-        )}\n\n${inlineSourceMappingURLCommentRegExp.source}`,
+        `^` +
+            escapeStringRegexp(
+                'body {\n  font: 100% Helvetica, sans-serif;\n  color: #333;\n}',
+            ) +
+            `\n\n` +
+            inlineSourceMappingURLCommentRegExp.source,
     );
     t.regex(files['foo.css'].contents.toString(), expectedCssTextRegExp);
     t.regex(files['bar.css'].contents.toString(), expectedCssTextRegExp);
@@ -99,9 +102,12 @@ test('should generate inline Source Map files with modules', async t => {
     );
 
     const expectedCssTextRegExp = new RegExp(
-        `^${escapeStringRegexp(
-            'body {\n  font: 100% Helvetica, sans-serif;\n  color: #333;\n}\n\n.inverse {\n  background-color: #333;\n  color: white;\n}',
-        )}\n\n${inlineSourceMappingURLCommentRegExp.source}`,
+        `^` +
+            escapeStringRegexp(
+                'body {\n  font: 100% Helvetica, sans-serif;\n  color: #333;\n}\n\n.inverse {\n  background-color: #333;\n  color: white;\n}',
+            ) +
+            `\n\n` +
+            inlineSourceMappingURLCommentRegExp.source,
     );
     t.regex(files['styles.css'].contents.toString(), expectedCssTextRegExp);
 
