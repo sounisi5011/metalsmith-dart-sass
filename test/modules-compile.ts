@@ -23,6 +23,16 @@ test('should compile SASS files with modules', async t => {
             t.log(files);
         },
     )(
+        !hasProp(files, 'styles.sass'),
+        'should remove styles.sass file',
+        msg => {
+            t.pass(msg);
+        },
+        msg => {
+            t.fail(msg);
+            t.log(files);
+        },
+    )(
         !hasProp(files, '_base.css'),
         'should not generate _base.css file',
         msg => {
@@ -35,6 +45,26 @@ test('should compile SASS files with modules', async t => {
     )(
         !hasProp(files, 'base.css'),
         'should not generate base.css file',
+        msg => {
+            t.pass(msg);
+        },
+        msg => {
+            t.fail(msg);
+            t.log(files);
+        },
+    )(
+        !hasProp(files, '_base.sass'),
+        'should remove _base.sass file',
+        msg => {
+            t.pass(msg);
+        },
+        msg => {
+            t.fail(msg);
+            t.log(files);
+        },
+    )(
+        hasProp(files, '_hoge.sass'),
+        'should not remove extraneous SASS file',
         msg => {
             t.pass(msg);
         },

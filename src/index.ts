@@ -58,6 +58,41 @@ function getDependenciesRecord(
     );
 }
 
+function removeIncludedFiles({
+    metalsmith,
+    writableFiles,
+    metalsmithSrcFullpath,
+    newFilename,
+    includedFiles,
+}: {
+    metalsmith: Metalsmith;
+    writableFiles: MetalsmithStrictWritableFiles;
+    metalsmithSrcFullpath: string;
+    newFilename: string;
+    includedFiles: ReadonlyArray<string>;
+}): void {
+    for (const includedFileFullpath of includedFiles) {
+        if (
+            newFilename ===
+            path.relative(metalsmithSrcFullpath, includedFileFullpath)
+        ) {
+            continue;
+        }
+
+        const [foundFilename] = findFile(
+            writableFiles,
+            includedFileFullpath,
+            metalsmith,
+        );
+        if (foundFilename === null) {
+            continue;
+        }
+
+        delete writableFiles[foundFilename];
+        debug('file deleted: %o', foundFilename);
+    }
+}
+
 function getSourceMapFullpath({
     sassOptions,
     destFileFullpath,
@@ -141,6 +176,13 @@ async function processFile({
     } else {
         debug('done process %o', filename);
     }
+    removeIncludedFiles({
+        metalsmith,
+        writableFiles,
+        metalsmithSrcFullpath,
+        newFilename,
+        includedFiles: result.stats.includedFiles,
+    });
 
     if (result.map) {
         const sourceMapFullpath = getSourceMapFullpath({
@@ -177,11 +219,12 @@ export = (opts: InputOptions = {}): Metalsmith.Plugin => {
             matchedFilenameList,
         );
 
+        const readonlyFiles = { ...files };
         const sourceMapFullpathSet = new Set<string>();
         await Promise.all(
             matchedFilenameList.map(async filename =>
                 processFile({
-                    files: { ...files },
+                    files: readonlyFiles,
                     writableFiles: files,
                     metalsmith,
                     options,
