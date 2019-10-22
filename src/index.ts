@@ -141,6 +141,26 @@ async function processFile({
     } else {
         debug('done process %o', filename);
     }
+    for (const includedFileFullpath of result.stats.includedFiles) {
+        if (
+            newFilename ===
+            path.relative(metalsmithSrcFullpath, includedFileFullpath)
+        ) {
+            continue;
+        }
+
+        const [foundFilename] = findFile(
+            writableFiles,
+            includedFileFullpath,
+            metalsmith,
+        );
+        if (foundFilename === null) {
+            continue;
+        }
+
+        delete writableFiles[foundFilename];
+        debug('file deleted: %o', foundFilename);
+    }
 
     if (result.map) {
         const sourceMapFullpath = getSourceMapFullpath({
@@ -177,11 +197,12 @@ export = (opts: InputOptions = {}): Metalsmith.Plugin => {
             matchedFilenameList,
         );
 
+        const readonlyFiles = { ...files };
         const sourceMapFullpathSet = new Set<string>();
         await Promise.all(
             matchedFilenameList.map(async filename =>
                 processFile({
-                    files: { ...files },
+                    files: readonlyFiles,
                     writableFiles: files,
                     metalsmith,
                     options,
