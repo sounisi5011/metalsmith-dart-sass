@@ -1,4 +1,5 @@
 import createDebug from 'debug';
+import isPathInside from 'is-path-inside';
 import Metalsmith from 'metalsmith';
 import path from 'path';
 import sass from 'sass';
@@ -21,13 +22,21 @@ const debug = createDebug(require('../package.json').name);
 
 const asyncRender = util.promisify(sass.render);
 
-function validateSourceMapFullpathDuplication({
+function validateSourceMapFullpath({
     sourceMapFullpath,
     sourceMapFullpathSet,
+    metalsmithDestFullpath,
 }: {
     sourceMapFullpath: string;
     sourceMapFullpathSet: Set<string>;
+    metalsmithDestFullpath: string;
 }): void {
+    if (!isPathInside(sourceMapFullpath, metalsmithDestFullpath)) {
+        throw new Error(
+            `The filepath of the SASS sourceMap option is invalid.` +
+                ` If you specify a string for the sourceMap option, you must specify a path in the Metalsmith destination directory.`,
+        );
+    }
     if (sourceMapFullpathSet.has(sourceMapFullpath)) {
         throw new Error(
             `Duplicate string value SASS sourceMap option are forbidden.` +
@@ -87,9 +96,10 @@ async function getSassOptions({
             metalsmithDestFullpath,
             inputSassOptions.sourceMap,
         );
-        validateSourceMapFullpathDuplication({
+        validateSourceMapFullpath({
             sourceMapFullpath,
             sourceMapFullpathSet,
+            metalsmithDestFullpath,
         });
         inputSassOptions.sourceMap = sourceMapFullpath;
     }
