@@ -297,7 +297,15 @@ test('should fail if the sourceMap option specifies a path that is not in the Me
 test('In the sassOptions specified in the object, specifying a string for the sourceMap option should fail', async t => {
     const metalsmith = Metalsmith(fixtures('simple'))
         .source('src')
-        .use(sass({ sassOptions: { sourceMap: 'out.map' } }));
+        .use(
+            sass({
+                sassOptions: {
+                    sourceMap:
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        'out.map' as any,
+                },
+            }),
+        );
 
     await t.throwsAsync(
         async () => {

@@ -54,7 +54,8 @@ type InputSassFunctionsValue =
     | Required<sass.Options>['functions'][string];
 
 export interface InputSassOptionsInterface
-    extends Omit<sass.Options, 'importer' | 'functions'> {
+    extends Omit<sass.Options, 'sourceMap' | 'importer' | 'functions'> {
+    sourceMap?: Exclude<Required<sass.Options>['sourceMap'], string>;
     importer?: InputSassImporter | InputSassImporter[];
     functions?: Record<string, InputSassFunctionsValue>;
 }
