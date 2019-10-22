@@ -66,18 +66,19 @@ async function getSassOptions({
     }
 
     if (typeof inputSassOptions.sourceMap === 'string') {
-        inputSassOptions.sourceMap = path.resolve(
+        const sourceMapFullpath = path.resolve(
             metalsmithDestFullpath,
             inputSassOptions.sourceMap,
         );
-        if (sourceMapFullpathSet.has(inputSassOptions.sourceMap)) {
+        if (sourceMapFullpathSet.has(sourceMapFullpath)) {
             throw new Error(
                 `Duplicate string value SASS sourceMap option are forbidden.` +
                     ` The Source Map filepath must be define for each file to be processed.` +
                     ` You need to define the sourceMap option with a different value for each file.`,
             );
         }
-        sourceMapFullpathSet.add(inputSassOptions.sourceMap);
+        sourceMapFullpathSet.add(sourceMapFullpath);
+        inputSassOptions.sourceMap = sourceMapFullpath;
     }
 
     return {
