@@ -93,16 +93,38 @@ function removeIncludedFiles({
     }
 }
 
-function getSourceMapFullpath({
-    sassOptions,
+function generateSourceMapFile({
+    writableFiles,
+    metalsmith,
+    metalsmithDestFullpath,
     destFileFullpath,
+    sassOptions,
+    result,
+    dependencies,
 }: {
-    sassOptions: sass.Options;
+    writableFiles: MetalsmithStrictWritableFiles;
+    metalsmith: Metalsmith;
+    metalsmithDestFullpath: string;
     destFileFullpath: string;
-}): string {
-    return typeof sassOptions.sourceMap === 'string'
-        ? sassOptions.sourceMap
-        : `${destFileFullpath}.map`;
+    sassOptions: sass.Options;
+    result: sass.Result;
+    dependencies: Record<string, Record<string, unknown>> | undefined;
+}): void {
+    if (result.map && sassOptions.sourceMapEmbed !== true) {
+        const sourceMapFullpath =
+            typeof sassOptions.sourceMap === 'string'
+                ? sassOptions.sourceMap
+                : `${destFileFullpath}.map`;
+        const sourceMapFilename = path.relative(
+            metalsmithDestFullpath,
+            sourceMapFullpath,
+        );
+        addFile(writableFiles, sourceMapFilename, result.map, {
+            otherData: dependencies,
+            metalsmith,
+        });
+        debug('generate SourceMap: %o', sourceMapFilename);
+    }
 }
 
 async function processFile({
@@ -184,21 +206,15 @@ async function processFile({
         includedFiles: result.stats.includedFiles,
     });
 
-    if (result.map) {
-        const sourceMapFullpath = getSourceMapFullpath({
-            sassOptions,
-            destFileFullpath,
-        });
-        const sourceMapFilename = path.relative(
-            metalsmithDestFullpath,
-            sourceMapFullpath,
-        );
-        addFile(writableFiles, sourceMapFilename, result.map, {
-            otherData: dependencies,
-            metalsmith,
-        });
-        debug('generate SourceMap: %o', sourceMapFilename);
-    }
+    generateSourceMapFile({
+        writableFiles,
+        metalsmith,
+        metalsmithDestFullpath,
+        destFileFullpath,
+        sassOptions,
+        result,
+        dependencies,
+    });
 }
 
 export = (opts: InputOptions = {}): Metalsmith.Plugin => {
