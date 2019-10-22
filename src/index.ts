@@ -142,7 +142,7 @@ async function processFile({
         debug('done process %o', filename);
     }
 
-    if (result.map) {
+    if (result.map && sassOptions.sourceMapEmbed !== true) {
         const sourceMapFullpath = getSourceMapFullpath({
             sassOptions,
             destFileFullpath,
