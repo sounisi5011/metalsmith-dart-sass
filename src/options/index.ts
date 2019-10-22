@@ -21,10 +21,21 @@ type OptionsGenerator<T> =
           defaultOptions: DefaultOptionsInterface,
       ) => T | Promise<T>);
 
+export interface SassOptionsObjectInterface
+    extends Omit<sass.Options, 'indentedSyntax'> {
+    /**
+     * Glob patterns that match files that use the Indented Syntax.
+     * For files that match the pattern, set Dart Sass's indentedSyntax option to true.
+     * @see https://sass-lang.com/documentation/syntax#the-indented-syntax
+     * @see https://sass-lang.com/documentation/js-api#indentedsyntax
+     */
+    indentedSyntax?: string | ReadonlyArray<string>;
+}
+
 export interface OptionsInterface {
     readonly pattern: ReadonlyArray<string>;
     readonly sassOptions:
-        | sass.Options
+        | SassOptionsObjectInterface
         | ((context: {
               filename: string;
               filedata: FileInterface;
