@@ -1,5 +1,6 @@
 import isPathInside from 'is-path-inside';
 import Metalsmith from 'metalsmith';
+import multimatch from 'multimatch';
 import path from 'path';
 import sass from 'sass';
 
@@ -160,13 +161,13 @@ export async function getSassOptions({
         inputSassOptions = {
             ...otherSassOptions,
         };
-        // if (indentedSyntax !== undefined) {
-        //     const indentedSyntaxPatterns = ([] as string[]).concat(
-        //         indentedSyntax,
-        //     );
-        //     inputSassOptions.indentedSyntax =
-        //         multimatch([filename], indentedSyntaxPatterns).length > 0;
-        // }
+        if (indentedSyntax !== undefined) {
+            const indentedSyntaxPatterns = ([] as string[]).concat(
+                indentedSyntax,
+            );
+            inputSassOptions.indentedSyntax =
+                multimatch([filename], indentedSyntaxPatterns).length > 0;
+        }
     }
 
     if (typeof inputSassOptions.sourceMap === 'string') {
