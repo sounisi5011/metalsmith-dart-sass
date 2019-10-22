@@ -117,6 +117,49 @@ export function normalize(
     return sassOptions;
 }
 
+async function func2sassOptions(
+    func: FunctionTypeOnly<OptionsInterface['sassOptions']>,
+    {
+        files,
+        metalsmith,
+        options,
+        filename,
+        filedata,
+        srcFileFullpath,
+        destFileFullpath,
+    }: {
+        files: MetalsmithStrictFiles;
+        metalsmith: Metalsmith;
+        options: OptionsInterface;
+        filename: string;
+        filedata: FileInterface;
+        srcFileFullpath: string;
+        destFileFullpath: string;
+    },
+): Promise<sass.Options> {
+    const sassOptions = await func({
+        filename,
+        filedata,
+        sourceFileFullpath: srcFileFullpath,
+        destinationFileFullpath: destFileFullpath,
+        metalsmith,
+        metalsmithFiles: files,
+        pluginOptions: options,
+    });
+
+    if (
+        hasProp(sassOptions, 'indentedSyntax') &&
+        typeof sassOptions.indentedSyntax !== 'boolean'
+    ) {
+        throw new TypeError(
+            `Non-boolean values are prohibited in the indentedSyntax option of the return value of the callback function sassOptions.` +
+                ` If you want to specify a glob pattern string or an array of strings, you need to specify a plain object in the sassOptions option.`,
+        );
+    }
+
+    return sassOptions;
+}
+
 function obj2sassOptions({
     sassOptionsObj,
     filename,
@@ -173,33 +216,21 @@ export async function getSassOptions({
     srcFileFullpath: string;
     destFileFullpath: string;
 }): Promise<sass.Options> {
-    let inputSassOptions: sass.Options;
-
-    if (typeof options.sassOptions === 'function') {
-        inputSassOptions = await options.sassOptions({
-            filename,
-            filedata,
-            sourceFileFullpath: srcFileFullpath,
-            destinationFileFullpath: destFileFullpath,
-            metalsmith,
-            metalsmithFiles: files,
-            pluginOptions: options,
-        });
-        if (
-            hasProp(inputSassOptions, 'indentedSyntax') &&
-            typeof inputSassOptions.indentedSyntax !== 'boolean'
-        ) {
-            throw new TypeError(
-                `Non-boolean values are prohibited in the indentedSyntax option of the return value of the callback function sassOptions.` +
-                    ` If you want to specify a glob pattern string or an array of strings, you need to specify a plain object in the sassOptions option.`,
-            );
-        }
-    } else {
-        inputSassOptions = obj2sassOptions({
-            sassOptionsObj: options.sassOptions,
-            filename,
-        });
-    }
+    const inputSassOptions =
+        typeof options.sassOptions === 'function'
+            ? await func2sassOptions(options.sassOptions, {
+                  files,
+                  metalsmith,
+                  options,
+                  filename,
+                  filedata,
+                  srcFileFullpath,
+                  destFileFullpath,
+              })
+            : obj2sassOptions({
+                  sassOptionsObj: options.sassOptions,
+                  filename,
+              });
 
     if (typeof inputSassOptions.sourceMap === 'string') {
         const sourceMapFullpath = path.resolve(
