@@ -4,7 +4,7 @@ import multimatch from 'multimatch';
 import path from 'path';
 import sass from 'sass';
 
-import { hasProp } from '../utils';
+import { omitUndefProps } from '../utils';
 import { FileInterface, MetalsmithStrictFiles } from '../utils/metalsmith';
 import { FunctionTypeOnly } from '../utils/types';
 import { OptionsInterface, SassOptionsObjectInterface } from '.';
@@ -41,10 +41,7 @@ async function func2sassOptions(
         pluginOptions: options,
     });
 
-    if (
-        hasProp(sassOptions, 'indentedSyntax') &&
-        typeof sassOptions.indentedSyntax !== 'boolean'
-    ) {
+    if (!['boolean', 'undefined'].includes(typeof sassOptions.indentedSyntax)) {
         throw new TypeError(
             `Non-boolean values are prohibited in the indentedSyntax option of the return value of the callback function sassOptions.` +
                 ` If you want to specify a glob pattern string or an array of strings, you need to specify a plain object in the sassOptions option.`,
@@ -139,7 +136,21 @@ export async function getSassOptions({
 
     return {
         indentedSyntax: path.extname(srcFileFullpath) === '.sass',
-        ...inputSassOptions,
+        ...omitUndefProps(inputSassOptions, [
+            'indentedSyntax',
+            'includePaths',
+            'outputStyle',
+            'indentType',
+            'indentWidth',
+            'linefeed',
+            'sourceMap',
+            'omitSourceMapUrl',
+            'sourceMapContents',
+            'sourceMapEmbed',
+            'sourceMapRoot',
+            'functions',
+            'importer',
+        ]),
         file: srcFileFullpath,
         outFile: destFileFullpath,
         data: filedata.contents.toString(),
