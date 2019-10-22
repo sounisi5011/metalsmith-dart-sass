@@ -1,11 +1,11 @@
 import createDebug from 'debug';
-import isPathInside from 'is-path-inside';
 import Metalsmith from 'metalsmith';
 import path from 'path';
 import sass from 'sass';
 import util from 'util';
 
 import { InputOptions, normalizeOptions, OptionsInterface } from './options';
+import { getSassOptions, validateSassOptions } from './options/sass';
 import { filterObj } from './utils';
 import {
     addFile,
@@ -21,97 +21,6 @@ import {
 const debug = createDebug(require('../package.json').name);
 
 const asyncRender = util.promisify(sass.render);
-
-function validateSourceMapFullpath({
-    sourceMapFullpath,
-    sourceMapFullpathSet,
-    metalsmithDestFullpath,
-}: {
-    sourceMapFullpath: string;
-    sourceMapFullpathSet: Set<string>;
-    metalsmithDestFullpath: string;
-}): void {
-    if (!isPathInside(sourceMapFullpath, metalsmithDestFullpath)) {
-        throw new Error(
-            `The filepath of the SASS sourceMap option is invalid.` +
-                ` If you specify a string for the sourceMap option, you must specify a path in the Metalsmith destination directory.`,
-        );
-    }
-    if (sourceMapFullpathSet.has(sourceMapFullpath)) {
-        throw new Error(
-            `Duplicate string value SASS sourceMap option are forbidden.` +
-                ` The Source Map filepath must be define for each file to be processed.` +
-                ` You need to define the sourceMap option with a different value for each file.`,
-        );
-    }
-    sourceMapFullpathSet.add(sourceMapFullpath);
-}
-
-async function getSassOptions({
-    files,
-    metalsmith,
-    options,
-    filename,
-    filedata,
-    metalsmithDestFullpath,
-    srcFileFullpath,
-    destFileFullpath,
-    sourceMapFullpathSet,
-}: {
-    files: MetalsmithStrictFiles;
-    metalsmith: Metalsmith;
-    options: OptionsInterface;
-    filename: string;
-    filedata: FileInterface;
-    metalsmithDestFullpath: string;
-    srcFileFullpath: string;
-    destFileFullpath: string;
-    sourceMapFullpathSet: Set<string>;
-}): Promise<sass.Options> {
-    let inputSassOptions: sass.Options;
-
-    if (typeof options.sassOptions === 'function') {
-        inputSassOptions = await options.sassOptions({
-            filename,
-            filedata,
-            sourceFileFullpath: srcFileFullpath,
-            destinationFileFullpath: destFileFullpath,
-            metalsmith,
-            metalsmithFiles: files,
-            pluginOptions: options,
-        });
-    } else {
-        inputSassOptions = options.sassOptions;
-        if (typeof inputSassOptions.sourceMap === 'string') {
-            throw new TypeError(
-                `String values for SASS sourceMap option are forbidden.` +
-                    ` The Source Map filepath must be define for each file to be processed.` +
-                    ` You need to specify a callback function in sassOptions and define the sourceMap option with a different value for each file.`,
-            );
-        }
-    }
-
-    if (typeof inputSassOptions.sourceMap === 'string') {
-        const sourceMapFullpath = path.resolve(
-            metalsmithDestFullpath,
-            inputSassOptions.sourceMap,
-        );
-        validateSourceMapFullpath({
-            sourceMapFullpath,
-            sourceMapFullpathSet,
-            metalsmithDestFullpath,
-        });
-        inputSassOptions.sourceMap = sourceMapFullpath;
-    }
-
-    return {
-        indentedSyntax: path.extname(srcFileFullpath) === '.sass',
-        ...inputSassOptions,
-        file: srcFileFullpath,
-        outFile: destFileFullpath,
-        data: filedata.contents.toString(),
-    };
-}
 
 function getDependenciesRecord(
     includedFiles: ReadonlyArray<string>,
@@ -196,7 +105,11 @@ async function processFile({
         metalsmithDestFullpath,
         srcFileFullpath,
         destFileFullpath,
+    });
+    validateSassOptions({
+        sassOptions,
         sourceMapFullpathSet,
+        metalsmithDestFullpath,
     });
     const result = await asyncRender(sassOptions);
 
