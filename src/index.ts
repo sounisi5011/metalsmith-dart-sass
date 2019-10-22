@@ -21,6 +21,23 @@ const debug = createDebug(require('../package.json').name);
 
 const asyncRender = util.promisify(sass.render);
 
+function validateSourceMapFullpathDuplication({
+    sourceMapFullpath,
+    sourceMapFullpathSet,
+}: {
+    sourceMapFullpath: string;
+    sourceMapFullpathSet: Set<string>;
+}): void {
+    if (sourceMapFullpathSet.has(sourceMapFullpath)) {
+        throw new Error(
+            `Duplicate string value SASS sourceMap option are forbidden.` +
+                ` The Source Map filepath must be define for each file to be processed.` +
+                ` You need to define the sourceMap option with a different value for each file.`,
+        );
+    }
+    sourceMapFullpathSet.add(sourceMapFullpath);
+}
+
 async function getSassOptions({
     files,
     metalsmith,
@@ -70,14 +87,10 @@ async function getSassOptions({
             metalsmithDestFullpath,
             inputSassOptions.sourceMap,
         );
-        if (sourceMapFullpathSet.has(sourceMapFullpath)) {
-            throw new Error(
-                `Duplicate string value SASS sourceMap option are forbidden.` +
-                    ` The Source Map filepath must be define for each file to be processed.` +
-                    ` You need to define the sourceMap option with a different value for each file.`,
-            );
-        }
-        sourceMapFullpathSet.add(sourceMapFullpath);
+        validateSourceMapFullpathDuplication({
+            sourceMapFullpath,
+            sourceMapFullpathSet,
+        });
         inputSassOptions.sourceMap = sourceMapFullpath;
     }
 
