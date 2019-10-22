@@ -1,15 +1,14 @@
-import sass from 'sass';
 import util from 'util';
 
 import { indent } from '../utils';
 import { loadOption, loadOptionGenerator } from '../utils/option';
 import { isFunctionsItem } from '../utils/sass';
-import { InputSassOptionsInterface } from '.';
+import { InputSassOptionsInterface, SassOptionsObjectInterface } from '.';
 
 function normalizeFunctionsEntryRecord(
     funcSignature: string,
     funcCallback: Record<string, unknown>,
-): Required<sass.Options>['functions'][string] {
+): Required<SassOptionsObjectInterface>['functions'][string] {
     const funcCallbackEntries = Object.entries(funcCallback);
     if (funcCallbackEntries.length !== 1) {
         throw new TypeError(
@@ -38,7 +37,7 @@ function normalizeFunctionsEntryRecord(
 function normalizeFunctionsEntry(
     funcSignature: string,
     funcCallback: Required<InputSassOptionsInterface>['functions'][string],
-): Required<sass.Options>['functions'][string] {
+): Required<SassOptionsObjectInterface>['functions'][string] {
     if (typeof funcCallback === 'string') {
         return loadOption({
             moduleName: funcCallback,
@@ -57,7 +56,7 @@ function normalizeFunctionsEntry(
 
 export function normalizeFunctions(
     inputFunctions: Required<InputSassOptionsInterface>['functions'],
-): Required<sass.Options>['functions'] {
+): Required<SassOptionsObjectInterface>['functions'] {
     return Object.entries(inputFunctions).reduce<
         ReturnType<typeof normalizeFunctions>
     >((functions, [funcSignature, funcCallback]) => {

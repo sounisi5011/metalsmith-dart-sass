@@ -62,11 +62,17 @@ type InputSassImporter = string | Record<string, unknown> | sass.Importer;
 type InputSassFunctionsValue =
     | string
     | Record<string, unknown>
-    | Required<sass.Options>['functions'][string];
+    | Required<SassOptionsObjectInterface>['functions'][string];
 
 export interface InputSassOptionsInterface
-    extends Omit<sass.Options, 'sourceMap' | 'importer' | 'functions'> {
-    sourceMap?: Exclude<Required<sass.Options>['sourceMap'], string>;
+    extends Omit<
+        SassOptionsObjectInterface,
+        'sourceMap' | 'importer' | 'functions'
+    > {
+    sourceMap?: Exclude<
+        Required<SassOptionsObjectInterface>['sourceMap'],
+        string
+    >;
     importer?: InputSassImporter | InputSassImporter[];
     functions?: Record<string, InputSassFunctionsValue>;
 }
@@ -76,7 +82,7 @@ export interface InputOptionsInterface
     readonly pattern: string | OptionsInterface['pattern'];
     readonly sassOptions:
         | string
-        | Exclude<OptionsInterface['sassOptions'], sass.Options>
+        | Exclude<OptionsInterface['sassOptions'], SassOptionsObjectInterface>
         | InputSassOptionsInterface;
     readonly renamer: string | OptionsInterface['renamer'] | boolean | null;
 }

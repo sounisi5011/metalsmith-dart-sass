@@ -1,13 +1,11 @@
-import sass from 'sass';
-
 import { loadOption, loadOptionGenerator } from '../utils/option';
 import { isImporter } from '../utils/sass';
 import { ArrayLikeOnly } from '../utils/types';
-import { InputSassOptionsInterface } from '.';
+import { InputSassOptionsInterface, SassOptionsObjectInterface } from '.';
 
 function normalizeImporterRecord(
     inputImporter: Record<string, unknown>,
-): ArrayLikeOnly<Required<sass.Options>['importer']> {
+): ArrayLikeOnly<Required<SassOptionsObjectInterface>['importer']> {
     return Object.entries(inputImporter).reduce<
         ReturnType<typeof normalizeImporterRecord>
     >(
@@ -27,7 +25,7 @@ function normalizeImporterRecord(
 
 export function normalizeImporter(
     inputImporter: Required<InputSassOptionsInterface>['importer'],
-): Required<sass.Options>['importer'] {
+): Required<SassOptionsObjectInterface>['importer'] {
     if (typeof inputImporter === 'string') {
         return loadOption({
             moduleName: inputImporter,
