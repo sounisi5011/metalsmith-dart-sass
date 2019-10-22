@@ -29,6 +29,17 @@ export function getMatchedFilenameList(
     return matchedFilenameList;
 }
 
+function getPathNormalizerList(
+    metalsmith?: Metalsmith,
+): (typeof path.normalize)[] {
+    return metalsmith
+        ? [
+              metalsmith.path.bind(metalsmith, metalsmith.source()),
+              metalsmith.path.bind(metalsmith, metalsmith.destination()),
+          ]
+        : [path.normalize];
+}
+
 export function findFilename(
     files: MetalsmithStrictFiles,
     searchFilename: string,
@@ -38,12 +49,7 @@ export function findFilename(
         return searchFilename;
     }
 
-    const pathNormalizerList: (typeof path.normalize)[] = metalsmith
-        ? [
-              metalsmith.path.bind(metalsmith, metalsmith.source()),
-              metalsmith.path.bind(metalsmith, metalsmith.destination()),
-          ]
-        : [path.normalize];
+    const pathNormalizerList = getPathNormalizerList(metalsmith);
     const filenameList = Object.keys(files);
 
     for (const pathNormalizer of pathNormalizerList) {
