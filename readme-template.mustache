@@ -22,7 +22,9 @@ codeclimateBadgeURL: https://api.codeclimate.com/v1/badges/6b88d91863e46e9c12fd/
 
 ## Install
 
-WIP
+```sh
+npm install {{{pkg.name}}}
+```
 
 ## CLI Usage
 
@@ -31,6 +33,19 @@ TODO
 ## Javascript Usage
 
 TODO
+
+## Debug mode
+
+This plugin supports debugging output.  
+To enable, use the following command when running your build script:
+
+```sh
+DEBUG={{{pkg.name}}} node my-website-build.js
+```
+
+For more details, please check the description of [debug v{{{pkgLock.dependencies.debug.version}}}][npm-debug-used].
+
+[npm-debug-used]: https://www.npmjs.com/package/debug/v/{{{pkgLock.dependencies.debug.version}}}
 
 ## Tests
 

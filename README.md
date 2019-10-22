@@ -18,7 +18,9 @@
 
 ## Install
 
-WIP
+```sh
+npm install metalsmith-dart-sass
+```
 
 ## CLI Usage
 
@@ -27,6 +29,19 @@ TODO
 ## Javascript Usage
 
 TODO
+
+## Debug mode
+
+This plugin supports debugging output.  
+To enable, use the following command when running your build script:
+
+```sh
+DEBUG=metalsmith-dart-sass node my-website-build.js
+```
+
+For more details, please check the description of [debug v4.1.1][npm-debug-used].
+
+[npm-debug-used]: https://www.npmjs.com/package/debug/v/4.1.1
 
 ## Tests
 
