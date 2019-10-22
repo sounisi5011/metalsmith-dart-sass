@@ -5,6 +5,7 @@ import sass from 'sass';
 import util from 'util';
 
 import { InputOptions, normalizeOptions, OptionsInterface } from './options';
+import { getSassOptions, validateSassOptions } from './options/sass';
 import { filterObj } from './utils';
 import {
     addFile,
@@ -20,44 +21,6 @@ import {
 const debug = createDebug(require('../package.json').name);
 
 const asyncRender = util.promisify(sass.render);
-
-async function getSassOptions({
-    files,
-    metalsmith,
-    options,
-    filename,
-    filedata,
-    srcFileFullpath,
-    destFileFullpath,
-}: {
-    files: MetalsmithStrictFiles;
-    metalsmith: Metalsmith;
-    options: OptionsInterface;
-    filename: string;
-    filedata: FileInterface;
-    srcFileFullpath: string;
-    destFileFullpath: string;
-}): Promise<sass.Options> {
-    const inputSassOptions: sass.Options =
-        typeof options.sassOptions === 'function'
-            ? await options.sassOptions({
-                  filename,
-                  filedata,
-                  sourceFileFullpath: srcFileFullpath,
-                  destinationFileFullpath: destFileFullpath,
-                  metalsmith,
-                  metalsmithFiles: files,
-                  pluginOptions: options,
-              })
-            : options.sassOptions;
-    return {
-        indentedSyntax: path.extname(srcFileFullpath) === '.sass',
-        ...inputSassOptions,
-        file: srcFileFullpath,
-        outFile: destFileFullpath,
-        data: filedata.contents.toString(),
-    };
-}
 
 function getDependenciesRecord(
     includedFiles: ReadonlyArray<string>,
@@ -95,6 +58,18 @@ function getDependenciesRecord(
     );
 }
 
+function getSourceMapFullpath({
+    sassOptions,
+    destFileFullpath,
+}: {
+    sassOptions: sass.Options;
+    destFileFullpath: string;
+}): string {
+    return typeof sassOptions.sourceMap === 'string'
+        ? sassOptions.sourceMap
+        : `${destFileFullpath}.map`;
+}
+
 async function processFile({
     files,
     writableFiles,
@@ -102,6 +77,7 @@ async function processFile({
     options,
     filename,
     filedata,
+    sourceMapFullpathSet,
 }: {
     files: MetalsmithStrictFiles;
     writableFiles: MetalsmithStrictWritableFiles;
@@ -109,6 +85,7 @@ async function processFile({
     options: OptionsInterface;
     filename: string;
     filedata: FileInterface;
+    sourceMapFullpathSet: Set<string>;
 }): Promise<void> {
     const metalsmithSrcFullpath = metalsmith.path(metalsmith.source());
     const metalsmithDestFullpath = metalsmith.path(metalsmith.destination());
@@ -125,8 +102,14 @@ async function processFile({
         options,
         filename,
         filedata,
+        metalsmithDestFullpath,
         srcFileFullpath,
         destFileFullpath,
+    });
+    validateSassOptions({
+        sassOptions,
+        sourceMapFullpathSet,
+        metalsmithDestFullpath,
     });
     const result = await asyncRender(sassOptions);
 
@@ -160,7 +143,10 @@ async function processFile({
     }
 
     if (result.map) {
-        const sourceMapFullpath = `${destFileFullpath}.map`;
+        const sourceMapFullpath = getSourceMapFullpath({
+            sassOptions,
+            destFileFullpath,
+        });
         const sourceMapFilename = path.relative(
             metalsmithDestFullpath,
             sourceMapFullpath,
@@ -191,6 +177,7 @@ export = (opts: InputOptions = {}): Metalsmith.Plugin => {
             matchedFilenameList,
         );
 
+        const sourceMapFullpathSet = new Set<string>();
         await Promise.all(
             matchedFilenameList.map(async filename =>
                 processFile({
@@ -200,6 +187,7 @@ export = (opts: InputOptions = {}): Metalsmith.Plugin => {
                     options,
                     filename,
                     filedata: validFiles[filename],
+                    sourceMapFullpathSet,
                 }),
             ),
         );
