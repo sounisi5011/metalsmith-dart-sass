@@ -216,21 +216,24 @@ export async function getSassOptions({
     srcFileFullpath: string;
     destFileFullpath: string;
 }): Promise<sass.Options> {
-    const inputSassOptions =
-        typeof options.sassOptions === 'function'
-            ? await func2sassOptions(options.sassOptions, {
-                  files,
-                  metalsmith,
-                  options,
-                  filename,
-                  filedata,
-                  srcFileFullpath,
-                  destFileFullpath,
-              })
-            : obj2sassOptions({
-                  sassOptionsObj: options.sassOptions,
-                  filename,
-              });
+    let inputSassOptions: sass.Options;
+
+    if (typeof options.sassOptions === 'function') {
+        inputSassOptions = await func2sassOptions(options.sassOptions, {
+            files,
+            metalsmith,
+            options,
+            filename,
+            filedata,
+            srcFileFullpath,
+            destFileFullpath,
+        });
+    } else {
+        inputSassOptions = obj2sassOptions({
+            sassOptionsObj: options.sassOptions,
+            filename,
+        });
+    }
 
     if (typeof inputSassOptions.sourceMap === 'string') {
         const sourceMapFullpath = path.resolve(
