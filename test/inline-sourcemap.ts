@@ -93,8 +93,8 @@ test('should generate inline Source Map files with modules', async t => {
     const files = await processAsync(metalsmith);
 
     t.deepEqual(
-        Object.keys(files),
-        ['styles.css'],
+        Object.keys(files).sort(),
+        ['styles.css', '_hoge.sass'].sort(),
         'should not generate Source Map files',
     );
 
