@@ -7,11 +7,22 @@ import { hasProp, isObject } from '../utils';
 import { FileInterface, MetalsmithStrictFiles } from '../utils/metalsmith';
 import { loadModule } from '../utils/option';
 import { FunctionTypeOnly } from '../utils/types';
-import { defaultOptions, InputOptionsInterface, OptionsInterface } from '.';
+import {
+    defaultOptions,
+    InputOptionsInterface,
+    OptionsInterface,
+    SassOptionsObjectInterface,
+} from '.';
 import { normalizeFunctions } from './sass-functions';
 import { normalizeImporter } from './sass-importer';
 
-function isSassOptionsObject(value: unknown): value is sass.Options {
+function isSassOptions(value: unknown): value is sass.Options {
+    return isObject(value);
+}
+
+function isSassOptionsObject(
+    value: unknown,
+): value is SassOptionsObjectInterface {
     return isObject(value);
 }
 
@@ -21,7 +32,7 @@ function toSassOptionsGenerator(
 ): FunctionTypeOnly<OptionsInterface['sassOptions']> {
     return async (...args) => {
         const ret = await value(...args);
-        if (!isSassOptionsObject(ret)) {
+        if (!isSassOptions(ret)) {
             throw new TypeError(
                 `Invalid sassOptions option. The function exported by this module does not return object: '${moduleName}'`,
             );
@@ -137,14 +148,25 @@ export async function getSassOptions({
             pluginOptions: options,
         });
     } else {
-        inputSassOptions = options.sassOptions;
-        if (typeof inputSassOptions.sourceMap === 'string') {
+        const sassOptionsObj = options.sassOptions;
+        if (typeof sassOptionsObj.sourceMap === 'string') {
             throw new TypeError(
                 `String values for SASS sourceMap option are forbidden.` +
                     ` The Source Map filepath must be define for each file to be processed.` +
                     ` You need to specify a callback function in sassOptions and define the sourceMap option with a different value for each file.`,
             );
         }
+        const { indentedSyntax, ...otherSassOptions } = sassOptionsObj;
+        inputSassOptions = {
+            ...otherSassOptions,
+        };
+        // if (indentedSyntax !== undefined) {
+        //     const indentedSyntaxPatterns = ([] as string[]).concat(
+        //         indentedSyntax,
+        //     );
+        //     inputSassOptions.indentedSyntax =
+        //         multimatch([filename], indentedSyntaxPatterns).length > 0;
+        // }
     }
 
     if (typeof inputSassOptions.sourceMap === 'string') {
