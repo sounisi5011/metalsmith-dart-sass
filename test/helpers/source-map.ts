@@ -39,3 +39,9 @@ export function isValidSourceMap(value: unknown): value is SourceMap {
             typeof value.mappings === 'string')
     );
 }
+
+export function base64ToStr(base64Str: string): string {
+    return Buffer.from(base64Str, 'base64').toString();
+}
+
+export const inlineSourceMappingURLCommentRegExp = /\/\*# sourceMappingURL=data:application\/json;base64,([a-zA-Z0-9+/=]+) \*\/$/;
