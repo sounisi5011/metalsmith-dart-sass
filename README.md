@@ -1,8 +1,10 @@
 # metalsmith-dart-sass
 
+[![Go to the latest release page on npm](https://img.shields.io/npm/v/metalsmith-dart-sass.svg)](https://www.npmjs.com/package/metalsmith-dart-sass)
 [![License: MIT](https://img.shields.io/static/v1?label=license&message=MIT&color=green)][github-license]
 ![Supported Node.js version: >=8.3.0](https://img.shields.io/static/v1?label=node&message=%3E%3D8.3.0&color=brightgreen)
 ![Type Definitions: TypeScript](https://img.shields.io/static/v1?label=types&message=TypeScript&color=blue)
+[![bundle size](https://badgen.net/bundlephobia/min/metalsmith-dart-sass@1.0.0)](https://bundlephobia.com/result?p=metalsmith-dart-sass@1.0.0)
 [![Dependencies Status](https://david-dm.org/sounisi5011/metalsmith-dart-sass/status.svg)](https://david-dm.org/sounisi5011/metalsmith-dart-sass)
 [![Build Status](https://travis-ci.com/sounisi5011/metalsmith-dart-sass.svg?branch=master)](https://travis-ci.com/sounisi5011/metalsmith-dart-sass)
 [![Maintainability Status](https://api.codeclimate.com/v1/badges/6b88d91863e46e9c12fd/maintainability)](https://codeclimate.com/github/sounisi5011/metalsmith-dart-sass/maintainability)
