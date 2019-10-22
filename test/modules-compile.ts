@@ -62,6 +62,16 @@ test('should compile SASS files with modules', async t => {
             t.fail(msg);
             t.log(files);
         },
+    )(
+        hasProp(files, '_hoge.sass'),
+        'should not remove extraneous SASS file',
+        msg => {
+            t.pass(msg);
+        },
+        msg => {
+            t.fail(msg);
+            t.log(files);
+        },
     );
 
     const expectedCssText =
