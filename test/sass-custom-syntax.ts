@@ -95,3 +95,31 @@ for (const indentedSyntax of [true, false]) {
         },
     );
 }
+
+test('should work if specify an undefined for the indentedSyntax option in the plain object of the sassOptions', async t => {
+    const metalsmith = Metalsmith(fixtures('simple'))
+        .source('src')
+        .use(
+            sass({
+                sassOptions: {
+                    indentedSyntax: undefined,
+                },
+            }),
+        );
+    await t.notThrowsAsync(processAsync(metalsmith));
+});
+
+test('should work if specify an undefined for the indentedSyntax option in the return value of the sassOptions callback function', async t => {
+    const metalsmith = Metalsmith(fixtures('simple'))
+        .source('src')
+        .use(
+            sass({
+                sassOptions() {
+                    return {
+                        indentedSyntax: undefined,
+                    };
+                },
+            }),
+        );
+    await t.notThrowsAsync(processAsync(metalsmith));
+});
