@@ -137,6 +137,14 @@ function obj2sassOptions({
         ...otherSassOptions,
     };
 
+    if (typeof indentedSyntax === 'boolean') {
+        throw new TypeError(
+            `Boolean values for SASS indentedSyntax option are forbidden.` +
+                ` The indentedSyntax option must be define for each file to be processed.` +
+                ` Instead, specify a glob pattern for files where the indentedSyntax option is true.` +
+                ` Alternatively, specify a callback function for the sassOptions option and specify boolean for the indentedSyntax option in the return value of the function.`,
+        );
+    }
     if (indentedSyntax !== undefined) {
         const indentedSyntaxPatterns = ([] as string[]).concat(indentedSyntax);
         sassOptions.indentedSyntax =
