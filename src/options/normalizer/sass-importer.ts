@@ -1,7 +1,7 @@
-import { loadOption, loadOptionGenerator } from '../utils/option';
-import { isImporter } from '../utils/sass';
-import { ArrayLikeOnly } from '../utils/types';
-import { InputSassOptionsInterface, SassOptionsObjectInterface } from '.';
+import { InputSassOptionsInterface, SassOptionsObjectInterface } from '..';
+import { loadOption, loadOptionGenerator } from '../../utils/option';
+import { isImporter } from '../../utils/sass';
+import { ArrayLikeOnly } from '../../utils/types';
 
 function normalizeImporterRecord(
     inputImporter: Record<string, unknown>,

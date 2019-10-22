@@ -1,9 +1,9 @@
 import util from 'util';
 
-import { indent } from '../utils';
-import { loadOption, loadOptionGenerator } from '../utils/option';
-import { isFunctionsItem } from '../utils/sass';
-import { InputSassOptionsInterface, SassOptionsObjectInterface } from '.';
+import { InputSassOptionsInterface, SassOptionsObjectInterface } from '..';
+import { indent } from '../../utils';
+import { loadOption, loadOptionGenerator } from '../../utils/option';
+import { isFunctionsItem } from '../../utils/sass';
 
 function normalizeFunctionsEntryRecord(
     funcSignature: string,
