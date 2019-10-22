@@ -7,7 +7,7 @@
 [![Build Status](https://travis-ci.com/sounisi5011/metalsmith-dart-sass.svg?branch=master)](https://travis-ci.com/sounisi5011/metalsmith-dart-sass)
 [![Maintainability Status](https://api.codeclimate.com/v1/badges/6b88d91863e46e9c12fd/maintainability)](https://codeclimate.com/github/sounisi5011/metalsmith-dart-sass/maintainability)
 
-[github-license]: https://github.com/sounisi5011/metalsmith-dart-sass/blob/v0.0.0/LICENSE
+[github-license]: https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/LICENSE
 
 [Dart Sass] plugin for [Metalsmith].
 

@@ -1,6 +1,6 @@
 {
   "name": "metalsmith-dart-sass",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "description": "Dart Sass plugin for Metalsmith",
   "keywords": [
     "compile",
