@@ -267,6 +267,94 @@ Type definition ([source line 48]({{{githubFileRoot}}}/src/options/index.ts#L48)
 string | boolean | null | (filename: string) => (string | Promise<string>)
 ```
 
+### `dependenciesKey`
+
+**To understand the description of this option, knowledge of [the Metalsmith plugin][Metalsmith plugin] is required.**
+
+[Metalsmith plugin]: https://metalsmith.io/#writing-a-plugin
+
+Specify the property name.
+The property specified by this option contains an object with the name and metadata of the before conversion files used in the SASS and SCSS conversion.
+
+For example, if you convert the following files:
+
+**`main.scss`**
+```scss
+@use 'foo';
+
+body {
+  background: black;
+}
+```
+
+**`_foo.scss`**
+```scss
+.foo {
+  font-weight: bold;
+}
+```
+
+If value `'dependencies data'` is specified in `dependenciesKey` option, the following "dependencies object" are inserted into the Metalsmith metadata:
+
+```js
+// This object is the value that subsequent Metalsmith plugins read from the "files" argument
+// see: https://github.com/segmentio/metalsmith#useplugin
+{
+  'main.css': {
+    // ↓ Properties automatically added by Metalsmith
+    contents: Buffer.from('.foo {\n  font-weight: bold;\n}\n\nbody {\n  background: black;\n}'), // Converted CSS contents
+    mode: ...,
+    stats: Stats { ... },
+    // ↑ Properties automatically added by Metalsmith
+
+    // ↓ dependencies object added by specifying "dependenciesKey" option
+    'dependencies data': {
+      // ↓ Metadata of main.scss before conversion
+      'main.scss': {
+        contents: Buffer.from('@use \'foo\';\n\nbody {\n  background: black;\n}\n'),
+        mode: ...,
+        stats: Stats { ... },
+        ...
+      },
+
+      // ↓ Metadata of _foo.scss before conversion
+      '_foo.scss': {
+        contents: Buffer.from('.foo {\n  font-weight: bold;\n}\n'),
+        mode: ...,
+        stats: Stats { ... },
+        ...
+      }
+    }
+  },
+  ...
+}
+```
+
+If an empty string or a non-string value is specified in the `dependenciesKey` option, the dependencies object is not insert.
+
+```js
+// These values not insert dependencies object
+false
+true
+null
+undefined
+''
+""
+``
+```
+
+Default value ([source]({{{githubFileRoot}}}/src/options/index.ts#L104)):
+
+```js
+false
+```
+
+Type definition ([source]({{{githubFileRoot}}}/src/options/index.ts#L49)):
+
+```ts
+string | false | null
+```
+
 ## Debug mode
 
 This plugin supports debugging output.  
