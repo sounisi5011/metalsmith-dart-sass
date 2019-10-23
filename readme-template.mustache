@@ -192,6 +192,81 @@ Type definition ([source line 36]({{{githubFileRoot}}}/src/options/index.ts#L36)
 string | string[]
 ```
 
+### `renamer`
+
+Specify a function to rename of processed SASS and SCSS files.
+By default, a function that replaces file extension with `.css` is setted.
+
+If you specify a [falsy value] other than `undefined`, such as `null` or `false`, processed files will not be renamed.
+
+[falsy value]: https://developer.mozilla.org/en-US/docs/Glossary/Falsy
+
+```js
+// These values disable file renaming
+false
+0
+-0
+NaN
+''
+""
+``
+null
+```
+
+If `undefined` or a [truthy value] other than string and function is specified, use the default renamer.
+
+[truthy value]: https://developer.mozilla.org/en-US/docs/Glossary/Truthy
+
+```js
+// These values use the default renamer
+undefined
+true
+42
+-42
+Infinity
+-Infinity
+{}
+[]
+/ab+c/i
+new Date()
+... // And other non-function objects
+```
+
+You can also specify the filepath of the script that exports the above values.
+
+```js
+const sass = require('{{{pkg.name}}}');
+
+metalsmith
+  .use(sass({
+    renamer: './sass-renamer.js'
+  }));
+```
+
+**`sass-renamer.js`**
+```js
+module.exports = filename => {
+  return `${filename}.css`;
+};
+```
+
+Default value ([source]({{{githubFileRoot}}}/src/options/index.ts#L99-L103)):
+
+```js
+const path = require('path');
+
+filename => {
+  const newFilename = path.basename(filename, path.extname(filename)) + '.css';
+  return path.join(path.dirname(filename), newFilename);
+}
+```
+
+Type definition ([source line 48]({{{githubFileRoot}}}/src/options/index.ts#L48) / [source line 87]({{{githubFileRoot}}}/src/options/index.ts#L87)):
+
+```ts
+string | boolean | null | (filename: string) => (string | Promise<string>)
+```
+
 ## Debug mode
 
 This plugin supports debugging output.  
