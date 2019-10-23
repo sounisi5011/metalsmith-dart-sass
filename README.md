@@ -139,10 +139,10 @@ For compatibility with the [Metalsmith CLI], this package exports single functio
 When using with TypeScript, it is better to use the [`import = require()` statement](https://www.typescriptlang.org/docs/handbook/modules.html#export--and-import--require).
 
 ```js
-import directoryMetadata = require('metalsmith-dart-sass');
+import sass = require('metalsmith-dart-sass');
 
 metalsmith
-  .use(directoryMetadata());
+  .use(sass());
 ```
 
 ## Debug mode
