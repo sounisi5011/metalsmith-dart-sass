@@ -250,9 +250,58 @@ string | InputSassOptionsInterface | SassOptionsFunction;
 
 TODO
 
+Type definition ([source line 24 - 33](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L24-L33) / [source line 67 - 78](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L67-L78)):
+
+```ts
+import sass from 'sass'; // @types/sass@1.16.0
+
+type InputSassImporter =
+    | string
+    | Record<string, unknown>
+    | sass.Importer;
+
+type InputSassFunctionsValue =
+    | string
+    | Record<string, unknown>
+    | Required<sass.Options>['functions'][string];
+
+interface InputSassOptionsInterface
+    extends Omit<
+        sass.Options,
+        'indentedSyntax' | 'sourceMap' | 'importer' | 'functions'
+    > {
+    indentedSyntax?: string | string[];
+    sourceMap?: Exclude<
+        Required<sass.Options>['sourceMap'],
+        string
+    >;
+    importer?: InputSassImporter | InputSassImporter[];
+    functions?: Record<string, InputSassFunctionsValue>;
+}
+
+InputSassOptionsInterface
+```
+
 #### functions that return SASS options
 
 TODO
+
+Type definition ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L39-L47)):
+
+```ts
+import Metalsmith from 'metalsmith'; // @types/metalsmith@2.3.0
+import sass from 'sass'; // @types/sass@1.16.0
+
+(context: {
+    filename: string;
+    filedata: object;
+    sourceFileFullpath: string;
+    destinationFileFullpath: string;
+    metalsmith: Metalsmith;
+    metalsmithFiles: Metalsmith.Files;
+    pluginOptions: object;
+}) => sass.Options | Promise<sass.Options>
+```
 
 #### filepath string
 

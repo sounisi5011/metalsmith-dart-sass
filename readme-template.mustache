@@ -254,9 +254,58 @@ string | InputSassOptionsInterface | SassOptionsFunction;
 
 TODO
 
+Type definition ([source line 24 - 33]({{{githubFileRoot}}}/src/options/index.ts#L24-L33) / [source line 67 - 78]({{{githubFileRoot}}}/src/options/index.ts#L67-L78)):
+
+```ts
+import sass from 'sass'; // @types/sass@{{{pkgLock.dependencies.@types/sass.version}}}
+
+type InputSassImporter =
+    | string
+    | Record<string, unknown>
+    | sass.Importer;
+
+type InputSassFunctionsValue =
+    | string
+    | Record<string, unknown>
+    | Required<sass.Options>['functions'][string];
+
+interface InputSassOptionsInterface
+    extends Omit<
+        sass.Options,
+        'indentedSyntax' | 'sourceMap' | 'importer' | 'functions'
+    > {
+    indentedSyntax?: string | string[];
+    sourceMap?: Exclude<
+        Required<sass.Options>['sourceMap'],
+        string
+    >;
+    importer?: InputSassImporter | InputSassImporter[];
+    functions?: Record<string, InputSassFunctionsValue>;
+}
+
+InputSassOptionsInterface
+```
+
 #### functions that return SASS options
 
 TODO
+
+Type definition ([source]({{{githubFileRoot}}}/src/options/index.ts#L39-L47)):
+
+```ts
+import Metalsmith from 'metalsmith'; // @types/metalsmith@{{{pkgLock.dependencies.@types/metalsmith.version}}}
+import sass from 'sass'; // @types/sass@{{{pkgLock.dependencies.@types/sass.version}}}
+
+(context: {
+    filename: string;
+    filedata: object;
+    sourceFileFullpath: string;
+    destinationFileFullpath: string;
+    metalsmith: Metalsmith;
+    metalsmithFiles: Metalsmith.Files;
+    pluginOptions: object;
+}) => sass.Options | Promise<sass.Options>
+```
 
 #### filepath string
 
