@@ -239,7 +239,7 @@ type SassOptionsFunction = (context: {
     sourceFileFullpath: string;
     destinationFileFullpath: string;
     metalsmith: Metalsmith;
-    metalsmithFiles: Metalsmith.Files[string];
+    metalsmithFiles: Metalsmith.Files;
     pluginOptions: object;
 }) => sass.Options | Promise<sass.Options>;
 
