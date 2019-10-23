@@ -188,6 +188,76 @@ Type definition ([source line 36](https://github.com/sounisi5011/metalsmith-dart
 string | string[]
 ```
 
+### `sassOptions`
+
+Specify [Dart Sass] options.
+There are three ways to specify options:
+
+* Plain objects with SASS options defined
+* Functions that return SASS options
+* Filepath string of the script that exports objects and functions
+
+Default value ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L98)):
+
+```js
+{}
+```
+
+Type definition ([source line 37 - 47](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L37-L47) / [source line 83 - 86](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L83-L86)):
+
+```ts
+import Metalsmith from 'metalsmith'; // @types/metalsmith@2.3.0
+import sass from 'sass'; // @types/sass@1.16.0
+
+type InputSassImporter =
+    | string
+    | Record<string, unknown>
+    | sass.Importer;
+
+type InputSassFunctionsValue =
+    | string
+    | Record<string, unknown>
+    | Required<sass.Options>['functions'][string];
+
+interface InputSassOptionsInterface
+    extends Omit<
+        sass.Options,
+        'indentedSyntax' | 'sourceMap' | 'importer' | 'functions'
+    > {
+    indentedSyntax?: string | string[];
+    sourceMap?: Exclude<
+        Required<sass.Options>['sourceMap'],
+        string
+    >;
+    importer?: InputSassImporter | InputSassImporter[];
+    functions?: Record<string, InputSassFunctionsValue>;
+}
+
+type SassOptionsFunction = (context: {
+    filename: string;
+    filedata: object;
+    sourceFileFullpath: string;
+    destinationFileFullpath: string;
+    metalsmith: Metalsmith;
+    metalsmithFiles: Metalsmith.Files[string];
+    pluginOptions: object;
+}) => sass.Options | Promise<sass.Options>;
+
+string | InputSassOptionsInterface | SassOptionsFunction;
+```
+
+#### plain object of SASS options
+
+TODO
+
+#### functions that return SASS options
+
+TODO
+
+#### filepath string
+
+TODO
+
 ### `renamer`
 
 Specify a function to rename of processed SASS and SCSS files.
