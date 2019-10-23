@@ -193,9 +193,9 @@ string | string[]
 Specify [Dart Sass] options.
 There are three ways to specify options:
 
-* Plain objects with SASS options defined
-* Functions that return SASS options
-* Filepath string of the script that exports objects and functions
+* [Plain objects with SASS options defined](#plain-object-of-sass-options)
+* [Functions that return SASS options](#functions-that-return-sass-options)
+* [Filepath string of the script that exports objects and functions](#filepath-string)
 
 Default value ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L98)):
 
