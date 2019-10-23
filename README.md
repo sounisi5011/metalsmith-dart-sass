@@ -56,17 +56,37 @@ Or, set the filepath of the script file that exports options to the value of the
 ```json
 {
   "plugins": {
-    "metalsmith-dart-sass": "./options.js"
+    "metalsmith-dart-sass": "./metalsmith-sass-options.js"
   }
 }
 ```
 
-**`options.js`**
+**`metalsmith-sass-options.js`**
 ```js
 module.exports = {
   sassOptions: {
     sourceMap: true
   }
+};
+```
+
+If you want to use the `files` variable or the default options value, you can specify the callback function that generates the options in script file.
+
+**`metalsmith.json`**
+```json
+{
+  "plugins": {
+    "metalsmith-dart-sass": "./metalsmith-sass-options.js"
+  }
+}
+```
+
+**`metalsmith-sass-options.js`**
+```js
+module.exports = (files, metalsmith, defaultOptions) => {
+  return {
+    pattern: [...defaultOptions.pattern, '!**/_*/**'],
+  };
 };
 ```
 
@@ -76,7 +96,54 @@ See [Metalsmith CLI] for more details.
 
 ## Javascript Usage
 
-TODO
+The simplest use is to omit the option.
+
+```js
+const sass = require('metalsmith-dart-sass');
+
+metalsmith
+  .use(sass());
+```
+
+If you need to specify an options, set the options value.
+
+```js
+const sass = require('metalsmith-dart-sass');
+
+metalsmith
+  .use(sass({
+    sassOptions: {
+      sourceMap: true
+    }
+  }));
+```
+
+If you want to use the `files` variable or the default options value, you can specify the callback function that generates the options.
+
+```js
+const sass = require('metalsmith-dart-sass');
+
+metalsmith
+  .use(sass(
+    (files, metalsmith, defaultOptions) => {
+      return {
+        pattern: [...defaultOptions.pattern, '!**/_*/**'],
+      };
+    }
+  ));
+```
+
+## TypeScript Usage
+
+For compatibility with the [Metalsmith CLI], this package exports single function in CommonJS style.  
+When using with TypeScript, it is better to use the [`import = require()` statement](https://www.typescriptlang.org/docs/handbook/modules.html#export--and-import--require).
+
+```js
+import directoryMetadata = require('metalsmith-dart-sass');
+
+metalsmith
+  .use(directoryMetadata());
+```
 
 ## Debug mode
 
