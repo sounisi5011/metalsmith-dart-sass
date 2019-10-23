@@ -24,7 +24,59 @@ npm install metalsmith-dart-sass
 
 ## CLI Usage
 
-TODO
+The simplest use is with a PostCSS configuration file.
+
+### Use PostCSS configuration file
+
+Install via npm and then add the `metalsmith-dart-sass` key to your `metalsmith.json` plugin, like so:
+
+**`metalsmith.json`**
+```json
+{
+  "plugins": {
+    "metalsmith-dart-sass": true
+  }
+}
+```
+
+If you need to specify an options, set the options to the value of the `metalsmith-dart-sass` key.
+
+**`metalsmith.json`**
+```json
+{
+  "plugins": {
+    "metalsmith-dart-sass": {
+      "sassOptions": {
+        "sourceMap": true
+      }
+    }
+  }
+}
+```
+
+Or, set the filepath of the script file that exports options to the value of the `metalsmith-dart-sass` key.
+
+**`metalsmith.json`**
+```json
+{
+  "plugins": {
+    "metalsmith-dart-sass": "./options.js"
+  }
+}
+```
+
+**`options.js`**
+```js
+module.exports = {
+  sassOptions: {
+    sourceMap: true
+  }
+};
+```
+
+See [Metalsmith CLI] for more details.
+
+[Metalsmith CLI]: https://github.com/segmentio/metalsmith#cli
 
 ## Javascript Usage
 
