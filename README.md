@@ -145,6 +145,29 @@ metalsmith
   .use(sass());
 ```
 
+## Options
+
+The default value for options are [defined](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L92-L106) like this:
+
+```js
+const path = require('path');
+
+{
+  /**
+   * Partial files whose names begin with an underscore should be excluded from conversion.
+   * @see https://sass-lang.com/guide#topic-4
+   */
+  pattern: ['**/*.sass', '**/*.scss', '!**/_*'],
+  plugins: [],
+  sassOptions: {},
+  renamer(filename) {
+    const newFilename = path.basename(filename, path.extname(filename)) + '.css';
+    return path.join(path.dirname(filename), newFilename);
+  },
+  dependenciesKey: false,
+}
+```
+
 ## Debug mode
 
 This plugin supports debugging output.  
