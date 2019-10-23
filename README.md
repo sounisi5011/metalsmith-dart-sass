@@ -167,6 +167,27 @@ const path = require('path');
 }
 ```
 
+### `pattern`
+
+Only files that match this pattern will be processed.
+Specify a glob expression string or an array of glob expression strings as the pattern.
+
+Pattern are verified using [multimatch v4.0.0][npm-multimatch-used].
+
+[npm-multimatch-used]: https://www.npmjs.com/package/multimatch/v/4.0.0
+
+Default value ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L97)):
+
+```js
+['**/*.sass', '**/*.scss', '!**/_*']
+```
+
+Type definition ([source line 36](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L36) / [source line 82](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L82)):
+
+```ts
+string | string[]
+```
+
 ## Debug mode
 
 This plugin supports debugging output.  
