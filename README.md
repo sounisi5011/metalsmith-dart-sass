@@ -250,7 +250,7 @@ string | InputSassOptionsInterface | SassOptionsFunction;
 
 TODO
 
-Type definition ([source line 24 - 33](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L24-L33) / [source line 67 - 78](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L67-L78)):
+Type definition ([source line 24 - 33](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L24-L33) / [source line 60 - 78](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L60-L78)):
 
 ```ts
 import sass from 'sass'; // @types/sass@1.16.0
