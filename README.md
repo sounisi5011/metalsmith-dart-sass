@@ -147,7 +147,7 @@ metalsmith
 
 ## Options
 
-The default value for options are [defined](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L92-L106) like this:
+The default value for options are [defined](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L92-L105) like this:
 
 ```js
 const path = require('path');
@@ -158,7 +158,6 @@ const path = require('path');
    * @see https://sass-lang.com/guide#topic-4
    */
   pattern: ['**/*.sass', '**/*.scss', '!**/_*'],
-  plugins: [],
   sassOptions: {},
   renamer(filename) {
     const newFilename = path.basename(filename, path.extname(filename)) + '.css';
