@@ -433,7 +433,24 @@ import sass from 'sass'; // @types/sass@{{{pkgLock.dependencies.@types/sass.vers
 
 #### filepath string
 
-TODO
+You can also specify the filepath of the script that exports the above values.
+
+```js
+const sass = require('{{{pkg.name}}}');
+
+metalsmith
+  .use(sass({
+    sassOptions: './sass-options.js'
+  }));
+```
+
+**`sass-options.js`**
+```js
+module.exports = {
+  outputStyle: 'compressed',
+  sourceMap: true
+};
+```
 
 ### `renamer`
 

@@ -429,7 +429,24 @@ import sass from 'sass'; // @types/sass@1.16.0
 
 #### filepath string
 
-TODO
+You can also specify the filepath of the script that exports the above values.
+
+```js
+const sass = require('metalsmith-dart-sass');
+
+metalsmith
+  .use(sass({
+    sassOptions: './sass-options.js'
+  }));
+```
+
+**`sass-options.js`**
+```js
+module.exports = {
+  outputStyle: 'compressed',
+  sourceMap: true
+};
+```
 
 ### `renamer`
 
