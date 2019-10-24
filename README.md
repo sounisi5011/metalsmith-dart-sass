@@ -248,7 +248,114 @@ string | InputSassOptionsInterface | SassOptionsFunction;
 
 #### plain object of SASS options
 
-TODO
+Specify [Dart Sass options] with an object.
+All options except the following properties are the same as Dart Sass.
+
+[Dart Sass options]: https://sass-lang.com/documentation/js-api#options
+
+*   `indentedSyntax`
+
+    Set the glob pattern of the file to be interpreted as the [indented syntax] (SASS syntax).
+    Pattern are verified using [multimatch v4.0.0][npm-multimatch-used].
+
+[indented syntax]: https://sass-lang.com/documentation/syntax#the-indented-syntax
+
+    For example, if you want a file with extension `.x-sass` to be interpreted as SASS syntax, set as follows:
+
+    ```js
+    const sass = require('metalsmith-dart-sass');
+
+    metalsmith
+      .use(sass({
+        pattern: '**/*.x-sass',
+        sassOptions: {
+          indentedSyntax: '**/*.x-sass'
+        }
+      }));
+    ```
+
+    By default, it is enabled for files with the extension `.sass`. If you want to add an extension, also add a `.sass` pattern.
+
+    ```js
+    const sass = require('metalsmith-dart-sass');
+
+    metalsmith
+      .use(sass(
+        (files, metalsmith, defaultOptions) => {
+          return {
+            pattern: [...defaultOptions.pattern, '**/*.x-sass'],
+            sassOptions: {
+              indentedSyntax: ['**/*.sass', '**/*.x-sass']
+            }
+          };
+        }
+      ));
+    ```
+
+*   `sourceMap`
+
+    A string value cannot be specified. Only boolean values ​​can be specified.
+    If you want to specify a string, specify it with [the return value of the function](#functions-that-return-sass-options).
+
+*   `importer`
+
+    In addition to the function value, you can specify a module name string or a plain object with the module name and option value.
+    For example, if you use the [node-sass-once-importer](https://www.npmjs.com/package/node-sass-once-importer) and the [node-sass-package-importer](https://www.npmjs.com/package/node-sass-package-importer) packages, you can specify this setting:
+
+    ```js
+    const sass = require('metalsmith-dart-sass');
+
+    metalsmith
+      .use(sass({
+        sassOptions: {
+          importer: {
+            'node-sass-once-importer': null, // equal to require('node-sass-once-importer')(null)
+            'node-sass-package-importer': {} // equal to require('node-sass-package-importer')({})
+          }
+        }
+      }));
+    ```
+
+    It is possible to specify at the same time with other importers.
+
+    ```js
+    const sass = require('metalsmith-dart-sass');
+
+    metalsmith
+      .use(sass({
+        sassOptions: {
+          importer: [
+            {
+              'node-sass-once-importer': {} // equal to require('node-sass-once-importer')({})
+            },
+            './custom-importer', // equal to require('./custom-importer')
+            {
+              'node-sass-package-importer': {} // equal to require('node-sass-package-importer')({})
+            },
+            (url, prev) => { ... }
+          ]
+        }
+      }));
+    ```
+
+*   `functions`
+
+    In addition to functions, the object value can be a script file path or an object with a file path and optional values.
+
+    ```js
+    const sass = require('metalsmith-dart-sass');
+
+    metalsmith
+      .use(sass({
+        pattern: '**/*.x-sass',
+        sassOptions: {
+          functions: {
+            'pow($base, $exponent)': './sass-functions-pow', // equal to require('./sass-functions-pow')
+            'sqrt($number)': { './sass-functions': { name: 'sqrt' } } // equal to require('./sass-functions')({ name: 'sqrt' })
+          }
+        }
+      }));
+    ```
 
 Type definition ([source line 24 - 33](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L24-L33) / [source line 60 - 78](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L60-L78)):
 
