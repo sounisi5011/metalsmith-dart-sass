@@ -95,7 +95,6 @@ export const defaultOptions: DefaultOptionsInterface = deepFreeze({
      * @see https://sass-lang.com/guide#topic-4
      */
     pattern: ['**/*.sass', '**/*.scss', '!**/_*'],
-    plugins: [],
     sassOptions: {},
     renamer(filename) {
         const newFilename =
