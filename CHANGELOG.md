@@ -2,12 +2,16 @@
 
 ## [Unreleased]
 
+[Unreleased]: https://github.com/sounisi5011/metalsmith-dart-sass/compare/v1.0.1...master
+
+## [1.0.1] (2019-10-24 UTC)
+
 ### Documentation
 
 * [#14] - Fix CHANGELOG URL
 * [#15] - Fix CHANGELOG URL
 
-[Unreleased]: https://github.com/sounisi5011/metalsmith-dart-sass/compare/v1.0.0...master
+[1.0.1]: https://github.com/sounisi5011/metalsmith-dart-sass/compare/v1.0.0...v1.0.1
 [#14]: https://github.com/sounisi5011/metalsmith-dart-sass/pull/14
 [#15]: https://github.com/sounisi5011/metalsmith-dart-sass/pull/15
 
