@@ -390,7 +390,25 @@ InputSassOptionsInterface
 
 #### functions that return SASS options
 
-TODO
+Specifies a function that returns [Dart Sass options].
+The function is called for each SASS / SCSS file.
+This can be used to generate options that require different values ​​for each file, such as `indentedSyntax` and `sourceMap`.
+
+```js
+const path = require('path');
+const sass = require('metalsmith-dart-sass');
+
+metalsmith
+  .use(sass({
+    sassOptions({ filename }) {
+      return {
+        outputStyle: 'compressed',
+        indentedSyntax: filename.startsWith(`sass${path.sep}`), // For example, enable SASS syntax for files in the sass directory
+        sourceMap: `${filename}.source.map` // For example, specify the Source Map filename as the original filename with ".source.map" suffix added
+      };
+    }
+  }));
+```
 
 Type definition ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L39-L47)):
 
