@@ -4,12 +4,12 @@
 [![License: MIT](https://img.shields.io/static/v1?label=license&message=MIT&color=green)][github-license]
 ![Supported Node.js version: >=8.3.0](https://img.shields.io/static/v1?label=node&message=%3E%3D8.3.0&color=brightgreen)
 ![Type Definitions: TypeScript](https://img.shields.io/static/v1?label=types&message=TypeScript&color=blue)
-[![bundle size](https://badgen.net/bundlephobia/min/metalsmith-dart-sass@1.0.0)](https://bundlephobia.com/result?p=metalsmith-dart-sass@1.0.0)
+[![bundle size](https://badgen.net/bundlephobia/min/metalsmith-dart-sass@1.0.1)](https://bundlephobia.com/result?p=metalsmith-dart-sass@1.0.1)
 [![Dependencies Status](https://david-dm.org/sounisi5011/metalsmith-dart-sass/status.svg)](https://david-dm.org/sounisi5011/metalsmith-dart-sass)
 [![Build Status](https://travis-ci.com/sounisi5011/metalsmith-dart-sass.svg?branch=master)](https://travis-ci.com/sounisi5011/metalsmith-dart-sass)
 [![Maintainability Status](https://api.codeclimate.com/v1/badges/6b88d91863e46e9c12fd/maintainability)](https://codeclimate.com/github/sounisi5011/metalsmith-dart-sass/maintainability)
 
-[github-license]: https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/LICENSE
+[github-license]: https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/LICENSE
 
 [Dart Sass] plugin for [Metalsmith].
 
@@ -147,7 +147,7 @@ metalsmith
 
 ## Options
 
-The default value for options are [defined](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L92-L105) like this:
+The default value for options are [defined](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L92-L105) like this:
 
 ```js
 const path = require('path');
@@ -176,13 +176,13 @@ Pattern are verified using [multimatch v4.0.0][npm-multimatch-used].
 
 [npm-multimatch-used]: https://www.npmjs.com/package/multimatch/v/4.0.0
 
-Default value ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L97)):
+Default value ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L97)):
 
 ```js
 ['**/*.sass', '**/*.scss', '!**/_*']
 ```
 
-Type definition ([source line 36](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L36) / [source line 82](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L82)):
+Type definition ([source line 36](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L36) / [source line 82](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L82)):
 
 ```ts
 string | string[]
@@ -197,13 +197,13 @@ There are three ways to specify options:
 * [Functions that return SASS options](#functions-that-return-sass-options)
 * [Filepath string of the script that exports objects and functions](#filepath-string)
 
-Default value ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L98)):
+Default value ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L98)):
 
 ```js
 {}
 ```
 
-Type definition ([source line 37 - 47](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L37-L47) / [source line 83 - 86](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L83-L86)):
+Type definition ([source line 37 - 47](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L37-L47) / [source line 83 - 86](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L83-L86)):
 
 ```ts
 import Metalsmith from 'metalsmith'; // @types/metalsmith@2.3.0
@@ -356,7 +356,7 @@ All options except the following properties are the same as Dart Sass.
       }));
     ```
 
-Type definition ([source line 24 - 33](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L24-L33) / [source line 60 - 78](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L60-L78)):
+Type definition ([source line 24 - 33](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L24-L33) / [source line 60 - 78](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L60-L78)):
 
 ```ts
 import sass from 'sass'; // @types/sass@1.16.0
@@ -410,7 +410,7 @@ metalsmith
   }));
 ```
 
-Type definition ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L39-L47)):
+Type definition ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L39-L47)):
 
 ```ts
 import Metalsmith from 'metalsmith'; // @types/metalsmith@2.3.0
@@ -506,7 +506,7 @@ module.exports = filename => {
 };
 ```
 
-Default value ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L99-L103)):
+Default value ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L99-L103)):
 
 ```js
 const path = require('path');
@@ -517,7 +517,7 @@ filename => {
 }
 ```
 
-Type definition ([source line 48](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L48) / [source line 87](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L87)):
+Type definition ([source line 48](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L48) / [source line 87](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L87)):
 
 ```ts
 string | boolean | null | (filename: string) => (string | Promise<string>)
@@ -599,13 +599,13 @@ undefined
 ``
 ```
 
-Default value ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L104)):
+Default value ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L104)):
 
 ```js
 false
 ```
 
-Type definition ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.0/src/options/index.ts#L49)):
+Type definition ([source](https://github.com/sounisi5011/metalsmith-dart-sass/blob/v1.0.1/src/options/index.ts#L49)):
 
 ```ts
 string | false | null
