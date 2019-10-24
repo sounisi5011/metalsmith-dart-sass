@@ -258,7 +258,7 @@ All options except the following properties are the same as Dart Sass.
     Set the glob pattern of the file to be interpreted as the [indented syntax] (SASS syntax).
     Pattern are verified using [multimatch v4.0.0][npm-multimatch-used].
 
-[indented syntax]: https://sass-lang.com/documentation/syntax#the-indented-syntax
+    [indented syntax]: https://sass-lang.com/documentation/syntax#the-indented-syntax
 
     For example, if you want a file with extension `.x-sass` to be interpreted as SASS syntax, set as follows:
 
@@ -347,7 +347,6 @@ All options except the following properties are the same as Dart Sass.
 
     metalsmith
       .use(sass({
-        pattern: '**/*.x-sass',
         sassOptions: {
           functions: {
             'pow($base, $exponent)': './sass-functions-pow', // equal to require('./sass-functions-pow')
