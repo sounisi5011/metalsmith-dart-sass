@@ -2,7 +2,12 @@
 
 ## [Unreleased]
 
+### Others
+
+* [#31] - Renovate package groups
+
 [Unreleased]: https://github.com/sounisi5011/metalsmith-dart-sass/compare/v1.0.1...master
+[#31]: https://github.com/sounisi5011/metalsmith-dart-sass/pull/31
 
 ## [1.0.1] (2019-10-24 UTC)
 
