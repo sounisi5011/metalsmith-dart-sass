@@ -93,7 +93,7 @@
   "dependencies": {
     "@types/metalsmith": "2.3.0",
     "@types/sass": "1.16.0",
-    "debug": "4.1.1",
+    "debug": "4.3.4",
     "deep-freeze-strict": "1.1.1",
     "import-cwd": "3.0.0",
     "is-path-inside": "3.0.2",
@@ -105,7 +105,7 @@
     "@sounisi5011/check-type-defs-pkgs": "file:script/check-type-defs-pkgs",
     "@sounisi5011/readme-generator": "file:script/readme-generator",
     "@types/cross-spawn": "6.0.1",
-    "@types/debug": "4.1.5",
+    "@types/debug": "4.1.7",
     "@types/deep-freeze-strict": "1.1.0",
     "@types/lodash.clonedeep": "4.5.6",
     "@typescript-eslint/eslint-plugin": "2.5.0",
